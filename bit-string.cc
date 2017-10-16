@@ -1,4 +1,4 @@
-#include "bitstring.h"
+#include "bit-string.h"
 
 Bitstring::Bitstring() {
 

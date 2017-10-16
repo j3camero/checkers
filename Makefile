@@ -2,10 +2,7 @@ CPPFLAGS = -Wall -O3
 
 all: test
 
-#main: $(OBJECTS)
-#	g++ $(OBJECTS) $(CFLAGS) -o main
-
-test-main: test-main.o test-bitstring.o
+test-main: test-main.o test-bit-string.o
 	g++ test-*.o -o test-main
 
 test: test-main
