@@ -1,9 +1,15 @@
+CC=g++
 CPPFLAGS = -Wall -O3
 
 all: test
 
-test-main: test-main.o test-bit-string.o
-	g++ test-*.o -o test-main
+bit-string-test: bit-string.o
+
+two-bit-string-test: two-bit-string.o
+
+test-main: test-main.o \
+           bit-string.o bit-string-test.o \
+           two-bit-string.o two-bit-string-test.o
 
 test: test-main
 	./test-main
