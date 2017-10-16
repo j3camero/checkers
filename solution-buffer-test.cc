@@ -11,6 +11,8 @@ TEST_CASE("Small buffer", "[SolutionBuffer]") {
   b.Set(6, Draw);
   REQUIRE(b.Get(0) == Win);
   REQUIRE(b.Get(1) == Loss);
+  REQUIRE(b.Get(2) == Unknown);
+  REQUIRE(b.Get(5) == Unknown);
   REQUIRE(b.Get(6) == Draw);
 }
 
@@ -24,6 +26,8 @@ TEST_CASE("Medium buffer", "[SolutionBuffer]") {
   b.Set(98, Draw);
   REQUIRE(b.Get(0) == Win);
   REQUIRE(b.Get(1) == Loss);
+  REQUIRE(b.Get(2) == Unknown);
+  REQUIRE(b.Get(97) == Unknown);
   REQUIRE(b.Get(98) == Draw);
 }
 
@@ -37,6 +41,8 @@ TEST_CASE("Large buffer", "[SolutionBuffer]") {
   b.Set(654320, Draw);
   REQUIRE(b.Get(0) == Win);
   REQUIRE(b.Get(1) == Loss);
+  REQUIRE(b.Get(2) == Unknown);
+  REQUIRE(b.Get(654319) == Unknown);
   REQUIRE(b.Get(654320) == Draw);
 }
 
@@ -49,5 +55,7 @@ TEST_CASE("Write to disk and read back", "[SolutionBuffer]") {
   SolutionBuffer b("test-solution-buffer");
   REQUIRE(b.Get(0) == Win);
   REQUIRE(b.Get(1) == Loss);
+  REQUIRE(b.Get(2) == Unknown);
+  REQUIRE(b.Get(97) == Unknown);
   REQUIRE(b.Get(98) == Draw);
 }

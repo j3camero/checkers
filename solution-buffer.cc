@@ -1,6 +1,6 @@
 #include "solution-buffer.h"
 
-#include <cassert>
+#include <iostream>
 
 SolutionBuffer::SolutionBuffer(uint64 _length) {
   length = _length;
@@ -9,11 +9,16 @@ SolutionBuffer::SolutionBuffer(uint64 _length) {
     buffer_slots += 1;
   }
   data = new uint64[buffer_slots];
+  for (uint64 i = 0; i < buffer_slots; ++i) {
+    data[i] = 0;
+  }
 }
 
 SolutionBuffer::SolutionBuffer(const std::string& filename) {
   bool success = Read(filename);
-  assert(success);
+  if (!success) {
+    throw "Failed to read SolutionBuffer from file.";
+  }
 }
 
 SolutionBuffer::~SolutionBuffer() {
@@ -21,11 +26,22 @@ SolutionBuffer::~SolutionBuffer() {
 }
 
 Solution SolutionBuffer::Get(uint64 index) {
-  return Unknown;
+  const uint64 slot_index = index / 32;
+  const uint64 slot = data[slot_index];
+  const int index_within_slot = index % 32;
+  const int bit_offset = 2 * index_within_slot;
+  const Solution value = (Solution)((slot >> bit_offset) & 3);
+  return value;
 }
 
 void SolutionBuffer::Set(uint64 index, Solution value) {
-  
+  const uint64 slot_index = index / 32;
+  const uint64 slot = data[slot_index];
+  const int index_within_slot = index % 32;
+  const int bit_offset = 2 * index_within_slot;
+  const uint64 cleared_slot = slot & ~(3 << bit_offset);
+  const uint64 shifted_value = ((uint64)((int)value)) << bit_offset;
+  data[slot_index] = shifted_value | cleared_slot;
 }
 
 uint64 SolutionBuffer::Length() {
