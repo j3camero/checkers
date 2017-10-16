@@ -51,8 +51,11 @@ TEST_CASE("Write to disk and read back", "[SolutionBuffer]") {
   a.Set(0, Win);
   a.Set(1, Loss);
   a.Set(98, Draw);
-  a.Write("test-solution-buffer");
-  SolutionBuffer b("test-solution-buffer");
+  const std::string filename("test-solution-buffer.egd");
+  bool write_success = a.Write(filename);
+  REQUIRE(write_success);
+  SolutionBuffer b(filename);
+  REQUIRE(b.Length() == 99);
   REQUIRE(b.Get(0) == Win);
   REQUIRE(b.Get(1) == Loss);
   REQUIRE(b.Get(2) == Unknown);

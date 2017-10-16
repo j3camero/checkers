@@ -1,6 +1,6 @@
 #include "solution-buffer.h"
 
-#include <iostream>
+#include <fstream>
 
 SolutionBuffer::SolutionBuffer(uint64 _length) {
   length = _length;
@@ -49,9 +49,34 @@ uint64 SolutionBuffer::Length() {
 }
 
 bool SolutionBuffer::Write(const std::string& filename) {
-  return false;
+  std::ofstream file(filename, std::ios::out | std::ios::binary);
+  const uint64 version = 1;
+  file.write((char*)&version, sizeof version);
+  file.write((char*)&length, sizeof length);
+  uint64 buffer_slots = length / 32;
+  if (length % 32 != 0) {
+    buffer_slots += 1;
+  }
+  for (uint64 i = 0; i < buffer_slots; ++i) {
+    file.write((char*)&data[i], sizeof data[i]);
+  }
+  file.close();
+  return true;
 }
 
 bool SolutionBuffer::Read(const std::string& filename) {
-  return false;
+  std::ifstream file(filename, std::ios::in | std::ios::binary);
+  uint64 version;
+  file.read((char*)&version, sizeof version);
+  file.read((char*)&length, sizeof length);
+  uint64 buffer_slots = length / 32;
+  if (length % 32 != 0) {
+    buffer_slots += 1;
+  }
+  data = new uint64[buffer_slots];
+  for (uint64 i = 0; i < buffer_slots; ++i) {
+    file.read((char*)&data[i], sizeof data[i]);
+  }
+  file.close();
+  return true;
 }
