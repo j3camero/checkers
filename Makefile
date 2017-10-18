@@ -4,6 +4,7 @@ CPPFLAGS = -Wall #-O3
 all: test
 
 test-main: test-main.o \
+           board.o board-test.o \
            bit-string.o bit-string-test.o \
            combinator.o combinator-test.o \
            enumerator.o enumerator-test.o \
