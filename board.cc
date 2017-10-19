@@ -19,7 +19,34 @@ Board::Board() {
 }
 
 Board::Board(const std::string& s) {
-  Clear();
+  int pieces_found = 0;
+  for (int i = 0; i < s.length(); ++i) {
+    char c = s[i];
+    for (int j = 0; j < 5; ++j) {
+      if (c == human_readable_chars[j]) {
+        const int index = human_readable_ordering[pieces_found];
+        pieces[index] = (Piece)j;
+        ++pieces_found;
+        break;
+      }
+    }
+  }
+  if (pieces_found != 32) {
+    throw "Error parsing a checkerboard: incorrect number of squares.";
+  }
+}
+
+Piece Board::GetPiece(int index) {
+  return pieces[index];
+}
+
+void Board::SetPiece(int index, Piece p) {
+  pieces[index] = p;
+}
+
+void Board::MovePiece(int from, int to) {
+  pieces[to] = pieces[from];
+  pieces[from] = Empty;
 }
 
 void Board::Clear() {
@@ -37,6 +64,28 @@ bool Board::operator==(const Board& other) const {
   return true;
 }
 
-std::string Board::HumanReadable() {
-  return "";
+bool Board::operator!=(const Board& other) const {
+  return !(*this == other);
+}
+
+// This is the Board's << operator for stream-style output. It's a friend.
+std::ostream& operator<<(std::ostream &out, const Board &board) {
+    out << board.HumanReadable();
+    return out;
+}
+
+std::string Board::HumanReadable() const {
+  std::string res;
+  for (int i = 0; i < 32; ++i) {
+    if (i % 8 == 0) {
+      res += "  ";
+    }
+    const int square = human_readable_ordering[i];
+    const int value = (int)pieces[square];
+    res += " " + std::string(1, human_readable_chars[value]) + " ";
+    if (i % 4 == 3) {
+      res += "\n";
+    }
+  }
+  return res;
 }
