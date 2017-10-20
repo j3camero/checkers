@@ -1,5 +1,5 @@
-#include "catch.hpp"
 #include "board.h"
+#include "catch.hpp"
 
 TEST_CASE("Get and Set", "[Board]") {
   Board b;
