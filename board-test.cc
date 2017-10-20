@@ -53,6 +53,13 @@ TEST_CASE("Move piece", "[Board]") {
   REQUIRE(b.GetPiece(17) == BlackPawn);
 }
 
+TEST_CASE("Trivial move", "[Board]") {
+  Board b;
+  b.SetPiece(13, BlackPawn);
+  b.MovePiece(13, 13);
+  REQUIRE(b.GetPiece(13) == BlackPawn);
+}
+
 TEST_CASE("Clear the board", "[Board]") {
   Board b;
   b.SetPiece(13, BlackPawn);

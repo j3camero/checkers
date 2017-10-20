@@ -82,6 +82,125 @@ TEST_CASE("Multiples overflows", "[Combinator]") {
   REQUIRE(c.Increment()); // Three.
 }
 
-TEST_CASE("Move 3 pieces on a checkerboard", "[Combinator]") {
+TEST_CASE("Move 1 piece on a checkerboard, no permutation", "[Combinator]") {
+  // Use a trivial permutation 0->0, 1->1, and 2->2.
+  std::vector<int> permutation;
+  permutation.push_back(0);
+  permutation.push_back(1);
+  permutation.push_back(2);
+  Board b("   -   -   -   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " b   -   -   -   ");
+  Combinator c(3, 1);
+  REQUIRE_FALSE(c.Increment(&permutation, &b));
+  REQUIRE(b == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   b   -   -   "));
+  REQUIRE_FALSE(c.Increment(&permutation, &b));
+  REQUIRE(b == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   b   -   "));
+  REQUIRE(c.Increment(&permutation, &b));
+  REQUIRE(b == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " b   -   -   -   "));
+}
+
+TEST_CASE("Two checkers dance on a checkerboard together", "[Combinator]") {
+  std::vector<int> permutation;
+  // Three diagonally connected squares.
+  permutation.push_back(22);
+  permutation.push_back(18);
+  permutation.push_back(13);
+  Board b("   -   -   -   - "
+          " -   -   -   -   "
+          "   -   -   B   - "
+          " -   -   w   -   "
+          "   -   -   -   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " -   -   -   -   ");
   Combinator c(3, 2);
+  REQUIRE_FALSE(c.Increment(&permutation, &b));
+  REQUIRE(b == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   B   - "
+                     " -   -   -   -   "
+                     "   -   w   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "));
+  REQUIRE_FALSE(c.Increment(&permutation, &b));
+  REQUIRE(b == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   B   -   "
+                     "   -   w   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "));
+  REQUIRE(c.Increment(&permutation, &b));
+  REQUIRE(b == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   B   - "
+                     " -   -   w   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "));
+}
+
+TEST_CASE("Move 3 pieces on a checkerboard with permutation", "[Combinator]") {
+  std::vector<int> permutation;
+  // The first 4 ranks in reverse order.
+  for (int i = 15; i >= 0; --i) {
+    permutation.push_back(i);
+  }
+  Board b("   -   -   -   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " -   -   -   -   "
+          "   -   B   W   b "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " -   -   -   -   ");
+  Combinator c(16, 3);
+  REQUIRE_FALSE(c.Increment(559, &permutation, &b));
+  REQUIRE(b == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " B   W   b   -   "));
+  REQUIRE(c.Increment(&permutation, &b));
+  REQUIRE(b == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   B   W   b "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "));
 }

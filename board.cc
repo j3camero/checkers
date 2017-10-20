@@ -45,6 +45,9 @@ void Board::SetPiece(int index, Piece p) {
 }
 
 void Board::MovePiece(int from, int to) {
+  if (from == to) {
+    return;
+  }
   pieces[to] = pieces[from];
   pieces[from] = Empty;
 }
