@@ -8,7 +8,7 @@
 
 class SolutionBuffer {
  public:
-  SolutionBuffer(uint64 _length);
+  SolutionBuffer(uint64 length);
   SolutionBuffer(const std::string& filename);
   ~SolutionBuffer();
   Solution Get(uint64 index);

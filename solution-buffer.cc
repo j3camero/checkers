@@ -2,8 +2,7 @@
 
 #include <fstream>
 
-SolutionBuffer::SolutionBuffer(uint64 _length) {
-  length = _length;
+SolutionBuffer::SolutionBuffer(uint64 length) : length(length) {
   uint64 buffer_slots = length / 32;
   if (length % 32 != 0) {
     buffer_slots += 1;
