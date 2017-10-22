@@ -36,7 +36,7 @@ Board::Board(const std::string& s) {
   }
 }
 
-Piece Board::GetPiece(int index) {
+Piece Board::GetPiece(int index) const {
   return pieces[index];
 }
 
@@ -72,7 +72,7 @@ bool Board::operator!=(const Board& other) const {
 }
 
 // This is the Board's << operator for stream-style output. It's a friend.
-std::ostream& operator<<(std::ostream &out, const Board &board) {
+std::ostream& operator<<(std::ostream &out, const Board& board) {
     out << board.HumanReadable();
     return out;
 }

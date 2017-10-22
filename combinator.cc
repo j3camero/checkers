@@ -5,9 +5,55 @@
 #include "board.h"
 #include "types.h"
 
+std::vector<uint64> factorial_cache;
+std::vector<std::vector<uint64> > choose_cache;
+
+// Precompute factorials and binomial coefficients. This function should be
+// run before any calls to Factorial(n) or Choose(n,k).
+bool DoPrecomputations() {
+  // I've heard that Factorial(21) exceeds 64-bit integer range.
+  const int max_factorial = 20;
+  uint64 f = 1;
+  factorial_cache.push_back(1);
+  for (int i = 1; i < max_factorial; ++i) {
+    f *= i;
+    factorial_cache.push_back(f);
+  }
+  // Binomial coefficients C(n,k) are small enough that they don't overflow,
+  // for small n and k.
+  const int max_choose = 50;
+  for (int n = 0; n < max_choose; ++n) {
+    choose_cache.push_back(std::vector<uint64>(n + 1, 1));
+    for (int k = 1; k < n; ++k) {
+      choose_cache[n][k] = choose_cache[n - 1][k - 1] + choose_cache[n - 1][k];
+    }
+  }
+  return true;
+}
+
+// This line make the precomputations run before main().
+bool done_precomputations = DoPrecomputations();
+
+uint64 Factorial(unsigned int n) {
+  if (n < factorial_cache.size()) {
+    return factorial_cache[n];
+  }
+  throw "Factorial value overflows 64-bit integer range.";
+}
+
+uint64 Choose(unsigned int n, unsigned int k) {
+  if (n < choose_cache.size()) {
+    if (k > n) {
+      throw "n must be larger than k.";
+    }
+    return choose_cache[n][k];
+  }
+  throw "Cannot calculate binomial coefficient Choose(n,k) for large n.";
+}
+
 Combinator::Combinator(int n, int k): n(n), k(k) {
   if (k > n) {
-    throw "n has to be larger than k.";
+    throw "n must be larger than k.";
   }
   index = 0;
   for (int i = 0; i < k; ++i) {
@@ -15,15 +61,15 @@ Combinator::Combinator(int n, int k): n(n), k(k) {
   }
 }
 
-int Combinator::GetN() {
+int Combinator::GetN() const {
   return n;
 }
 
-int Combinator::GetK() {
+int Combinator::GetK() const {
   return k;
 }
 
-int Combinator::GetCounter(int i) {
+int Combinator::GetCounter(int i) const {
   return counters[i];
 }
 
@@ -82,10 +128,57 @@ bool Combinator::Increment(uint64 count,
   return any_true;
 }
 
-uint64 Combinator::Index() {
+uint64 Combinator::NumCombinations() const {
+  return Choose(n, k);
+}
+
+uint64 Combinator::Index() const {
   return index;
 }
 
 void Combinator::Deindex(uint64 new_index) {
+  if (new_index >= Choose(n, k)) {
+    throw "Index is too large.";
+  }
   index = new_index;
+  uint64 rem = index;
+  int c = 0;
+  for (int i = 0; i < k; ++i) {
+    while (Choose(n - c - 1, k - i - 1) <= rem) {
+      rem -= Choose(n - c - 1, k - i - 1);
+      ++c;
+    }
+    counters[i] = c;
+    ++c;
+  }
+}
+
+bool Combinator::operator==(const Combinator& other) const {
+  if (n != other.n || k != other.k || index != other.index) {
+    return false;
+  }
+  for (int i = 0; i < k; ++i) {
+    if (counters[i] != other.counters[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool Combinator::operator!=(const Combinator& other) const {
+  return !(*this == other);
+}
+
+// This is the Combinator's << operator for stream-style output. It's a friend.
+std::ostream& operator<<(std::ostream &out, const Combinator& c) {
+    out << "Combinator(" << c.GetN() << "," << c.GetK() << ") index: "
+        << c.Index() << " counters: [";
+    for (int i = 0; i < c.GetK(); ++i) {
+      if (i > 0) {
+        out << ", ";
+      }
+      out << c.GetCounter(i);
+    }
+    out << "]";
+    return out;
 }

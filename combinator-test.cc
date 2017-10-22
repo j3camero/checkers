@@ -2,6 +2,31 @@
 #include "catch.hpp"
 #include "combinator.h"
 
+TEST_CASE("Factorial", "[Combinator]") {
+  REQUIRE(Factorial(0) == 1);
+  REQUIRE(Factorial(1) == 1);
+  REQUIRE(Factorial(2) == 2);
+  REQUIRE(Factorial(3) == 6);
+  REQUIRE(Factorial(10) == 3628800);
+  REQUIRE(Factorial(19) == 121645100408832000ull);  // Check value > 2^32.
+  REQUIRE_THROWS(Factorial(22));  // Should throw due to 64-bit value overflow.
+  REQUIRE_THROWS(Factorial(999));  // Should not even attempt ridiculous value.
+}
+
+TEST_CASE("Choose", "[Combinator]") {
+  REQUIRE(Choose(0, 0) == 1);
+  REQUIRE(Choose(1, 0) == 1);
+  REQUIRE(Choose(1, 1) == 1);
+  REQUIRE(Choose(2, 1) == 2);
+  REQUIRE(Choose(5, 2) == 10);
+  REQUIRE(Choose(9, 9) == 1);
+  REQUIRE(Choose(9, 0) == 1);
+  REQUIRE(Choose(13, 7) == 1716);
+  REQUIRE(Choose(19, 15) == 3876);
+  REQUIRE_THROWS(Choose(5, 6));  // 0 <= k <= n.
+  REQUIRE_THROWS(Choose(999, 499));  // Refuse to calculate for large n.
+}
+
 TEST_CASE("Constructor", "[Combinator]") {
   Combinator c(3, 2);
   REQUIRE(c.GetN() == 3);
@@ -71,7 +96,7 @@ TEST_CASE("Large combinator overflow", "[Combinator]") {
   REQUIRE(c.GetCounter(4) == 4);
 }
 
-TEST_CASE("Multiples overflows", "[Combinator]") {
+TEST_CASE("Multiple overflows", "[Combinator]") {
   // Use a combinator that has 2 states to test that multiple overflows work.
   Combinator c(2, 1);
   REQUIRE_FALSE(c.Increment());
@@ -203,4 +228,50 @@ TEST_CASE("Move 3 pieces on a checkerboard with permutation", "[Combinator]") {
                      " -   -   -   -   "
                      "   -   -   -   - "
                      " -   -   -   -   "));
+}
+
+TEST_CASE("Deindex small", "[Combinator]") {
+  // Check the deindex function by comparing with a second comparator
+  // calculated using a separate method.
+  Combinator a(5, 3);  // This one is deindexed.
+  Combinator b(5, 3);  // This one is incremented one at a time.
+  for (uint64 index = 0; index < Choose(5, 3); ++index) {
+    a.Deindex(index);
+    REQUIRE(a == b);
+    b.Increment();
+  }
+}
+
+TEST_CASE("Deindex medium", "[Combinator]") {
+  Combinator a(19, 15);
+  a.Deindex(3857);
+  Combinator b(19, 15);
+  b.Increment(3857);
+  REQUIRE(a == b);
+}
+
+TEST_CASE("Deindex large", "[Combinator]") {
+  Combinator a(28, 14);
+  a.Deindex(15485863);
+  Combinator b(28, 14);
+  b.Increment(15485863);
+  REQUIRE(a == b);
+}
+
+TEST_CASE("Equality operator for Combinators", "[Combinator]") {
+  REQUIRE(Combinator(5, 3) == Combinator(5, 3));
+  REQUIRE_FALSE(Combinator(5, 3) != Combinator(5, 3));
+  REQUIRE_FALSE(Combinator(5, 3) == Combinator(5, 2));
+  REQUIRE(Combinator(5, 3) != Combinator(5, 2));
+  REQUIRE_FALSE(Combinator(5, 3) == Combinator(4, 3));
+  Combinator a(3, 2);
+  Combinator b(3, 2);
+  for (uint64 i = 0; i < Choose(3, 2); ++i) {
+    a.Increment();
+    REQUIRE_FALSE(a == b);
+    REQUIRE(a != b);
+    b.Increment();
+    REQUIRE(a == b);
+    REQUIRE_FALSE(a != b);
+  }
 }

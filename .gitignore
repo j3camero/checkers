@@ -33,3 +33,9 @@
 
 # Emacs temp files
 *~
+
+# Weird files on mac
+*.DS_Store
+
+# Checkers endgame databases
+*.egd

@@ -20,7 +20,7 @@ class Board {
   // Initialize a board from a human-readable string.
   Board(const std::string& s);
 
-  Piece GetPiece(int index);
+  Piece GetPiece(int index) const;
   void SetPiece(int index, Piece p);
 
   // Moves the value from square 'from' to square 'to'. No check is made that
@@ -38,7 +38,7 @@ class Board {
   std::string HumanReadable() const;
 
   // Support stream-style printing of the board using the << operator.
-  friend std::ostream& operator<<(std::ostream &out, const Board &board);
+  friend std::ostream& operator<<(std::ostream &out, const Board& board);
 
  private:
   Piece pieces[32];
