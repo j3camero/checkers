@@ -258,6 +258,22 @@ TEST_CASE("Deindex large", "[Combinator]") {
   REQUIRE(a == b);
 }
 
+TEST_CASE("Reset combinator after incrementing", "[Combinator]") {
+  Combinator a(19, 15);
+  a.Increment(3857);
+  a.Reset();
+  Combinator b(19, 15);
+  REQUIRE(a == b);
+}
+
+TEST_CASE("Reset combinator after deindexing", "[Combinator]") {
+  Combinator a(28, 14);
+  a.Deindex(15485863);
+  a.Reset();
+  Combinator b(28, 14);
+  REQUIRE(a == b);
+}
+
 TEST_CASE("Equality operator for Combinators", "[Combinator]") {
   REQUIRE(Combinator(5, 3) == Combinator(5, 3));
   REQUIRE_FALSE(Combinator(5, 3) != Combinator(5, 3));

@@ -46,6 +46,9 @@ class Combinator {
   // Sets the counters to correspond to the index new_index.
   void Deindex(uint64 new_index);
 
+  // Resets the Combinator to its initial position, at index zero.
+  void Reset();
+
   // Equality operators. Checks that the same k-combination is selected, not
   // just that n and k match.
   bool operator==(const Combinator& other) const;

@@ -55,10 +55,7 @@ Combinator::Combinator(int n, int k): n(n), k(k) {
   if (k > n) {
     throw "n must be larger than k.";
   }
-  index = 0;
-  for (int i = 0; i < k; ++i) {
-    counters.push_back(i);
-  }
+  Reset();
 }
 
 int Combinator::GetN() const {
@@ -150,6 +147,14 @@ void Combinator::Deindex(uint64 new_index) {
     }
     counters[i] = c;
     ++c;
+  }
+}
+
+void Combinator::Reset() {
+  index = 0;
+  counters.clear();
+  for (int i = 0; i < k; ++i) {
+    counters.push_back(i);
   }
 }
 
