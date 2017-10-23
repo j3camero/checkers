@@ -48,7 +48,7 @@ uint64 SolutionBuffer::Length() {
 }
 
 bool SolutionBuffer::Write(const std::string& filename) {
-  std::ofstream file(filename, std::ios::out | std::ios::binary);
+  std::ofstream file(filename.c_str(), std::ios::out | std::ios::binary);
   const uint64 version = 1;
   file.write((char*)&version, sizeof version);
   file.write((char*)&length, sizeof length);
@@ -64,7 +64,7 @@ bool SolutionBuffer::Write(const std::string& filename) {
 }
 
 bool SolutionBuffer::Read(const std::string& filename) {
-  std::ifstream file(filename, std::ios::in | std::ios::binary);
+  std::ifstream file(filename.c_str(), std::ios::in | std::ios::binary);
   uint64 version;
   file.read((char*)&version, sizeof version);
   file.read((char*)&length, sizeof length);
