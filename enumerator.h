@@ -22,6 +22,13 @@ class Enumerator {
   // Cycles through several arrangements of the checkers. Deindex is faster.
   bool Increment(uint64 count);
 
+  // Resets the enumerator to the intial position 0.
+  //
+  // The enumerator can cycle multiple times without needing to call this
+  // function. It's only needed if you want to interrupt the enumerator partway
+  // through an iteration in order to reset it to zero.
+  void Reset();
+
   // Return the current index.
   uint64 Index() const;
 

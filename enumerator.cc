@@ -12,6 +12,7 @@ Enumerator::Enumerator(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp)
     bp(4 * (rbp + 1), nbp), bk(32 - nbp - nwp, nbk),
     wk(32 - nbp - nwp - nbk, nwk) {
   // Here's the actual start of the function.
+  wp = NULL;
   max_bp = Choose(4 * (rbp + 1), nbp);
   if (rbp > 0) {
     max_bp -= Choose(4 * rbp, nbp);
@@ -57,14 +58,8 @@ Enumerator::Enumerator(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp)
   // max_bp is not used to calcualte the total because max_wp is already the
   // total summed over every arrangement of black pawns.
   num_positions = max_wp * max_bk * max_wk;
-  // Reset the black pawns to their initial places from before the warmup lap.
-  board.Clear();
-  bp.Reset();
-  SetupBlackPawns();
-  wp = NULL;
-  SetupWhitePawns();
-  SetupBlackKings();
-  SetupWhiteKings();
+  // Reset the pieces to their starting positions.
+  Reset();
 }
 
 Enumerator::~Enumerator() {
@@ -95,6 +90,8 @@ bool Enumerator::Increment() {
   }
   board.Clear(WhitePawn);
   if (!bp.Increment(&bp_squares, &board)) {
+    // The if statements are separated this way so that it's clear the
+    // Increment() happens before the Index().
     if (bp.Index() < max_bp) {
       SetupWhitePawns();
       SetupBlackKings();
@@ -102,13 +99,7 @@ bool Enumerator::Increment() {
       return false;
     }
   }
-  board.Clear(BlackPawn);
-  bp.Reset();
-  SetupBlackPawns();
-  SetupWhitePawns();
-  SetupBlackKings();
-  SetupWhiteKings();
-  index = 0;
+  Reset();
   return true;
 }
 
@@ -119,6 +110,16 @@ bool Enumerator::Increment(uint64 count) {
     --count;
   }
   return any_true;
+}
+
+void Enumerator::Reset() {
+  board.Clear();
+  bp.Reset();
+  SetupBlackPawns();
+  SetupWhitePawns();
+  SetupBlackKings();
+  SetupWhiteKings();
+  index = 0;
 }
 
 uint64 Enumerator::Index() const {
