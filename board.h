@@ -30,6 +30,9 @@ class Board {
   // Sets all the spaces to empty.
   void Clear();
 
+  // Removes all pices of a certain type from the board.
+  void Clear(Piece p);
+
   // Equality operator.
   bool operator==(const Board& other) const;
   bool operator!=(const Board& other) const;

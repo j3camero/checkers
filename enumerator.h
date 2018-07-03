@@ -50,6 +50,24 @@ class Enumerator {
   friend std::ostream& operator<<(std::ostream &out, const Enumerator& e);
 
  private:
+   // Set up the black pawns on the board. Assumes that the board stars empty.
+   void SetupBlackPawns();
+
+   // Set up a white pawn cycle. Assumes black pawns are already placed, and
+   // there are no other piece types in the way.
+   // Makes a list of the squares that are not already taken by other pieces,
+   // initializes the white pawn combinator, and places the white pawns on the
+   // board in their initial configuration, ready to iterate.
+   void SetupWhitePawns();
+
+   // Sets up a black king cycle. Assumes black pawns and white pawns are
+   // already placed, but not any kings.
+   void SetupBlackKings();
+
+   // Sets up a white king cycle. Assumes all pawns and black kings are
+   // already placed.
+   void SetupWhiteKings();
+
    int nbk;  // Number of black kings.
    int nwk;  // Number of white kings.
    int nbp;  // Number of black pawns.
