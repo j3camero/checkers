@@ -69,6 +69,27 @@ TEST_CASE("Clear the board", "[Board]") {
   REQUIRE(b.GetPiece(17) == Empty);
 }
 
+TEST_CASE("Clear a specific type of piece from the board.", "[Board]") {
+  Board a("   B   b   -   B "
+          " w   W   -   -   "
+          "   -   b   B   - "
+          " b   w   -   -   "
+          "   -   B   -   w "
+          " -   W   B   -   "
+          "   b   w   -   W "
+          " W   -   b   -   ");
+  a.Clear(BlackKing);
+  Board b("   -   b   -   - "
+          " w   W   -   -   "
+          "   -   b   -   - "
+          " b   w   -   -   "
+          "   -   -   -   w "
+          " -   W   -   -   "
+          "   b   w   -   W "
+          " W   -   b   -   ");
+  REQUIRE(a == b);
+}
+
 TEST_CASE("Human readable output", "[Board]") {
   Board a("   B   b   -   B "
           " w   W   -   -   "

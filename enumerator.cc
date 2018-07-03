@@ -28,10 +28,7 @@ Enumerator::Enumerator(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp)
   for (int i = 4 * rbp + 3; i >= 0; --i) {
     bp_squares.push_back(i);
   }
-  // Place nbp black checkers on the board.
-  for (int i = 0; i < nbp; ++i) {
-    board.SetPiece(bp_squares[i], BlackPawn);
-  }
+  SetupBlackPawns();
   // Do a "warmup lap". Cycle through all arrangements of black pawns. For
   // each, calculate the number of possible arrangements of white pawns.
   max_wp = 0;
@@ -60,8 +57,14 @@ Enumerator::Enumerator(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp)
   // max_bp is not used to calcualte the total because max_wp is already the
   // total summed over every arrangement of black pawns.
   num_positions = max_wp * max_bk * max_wk;
+  // Reset the black pawns to their initial places from before the warmup lap.
+  board.Clear();
   bp.Reset();
+  SetupBlackPawns();
   wp = NULL;
+  SetupWhitePawns();
+  SetupBlackKings();
+  SetupWhiteKings();
 }
 
 Enumerator::~Enumerator() {
@@ -75,8 +78,37 @@ uint64 Enumerator::NumPositions() const {
 }
 
 bool Enumerator::Increment() {
-  // Make proper increment.
   ++index;
+  if (!wk.Increment(&wk_squares, &board)) {
+    return false;
+  }
+  board.Clear(WhiteKing);
+  if (!bk.Increment(&bk_squares, &board)) {
+    SetupWhiteKings();
+    return false;
+  }
+  board.Clear(BlackKing);
+  if (!wp->Increment(&wp_squares, &board) && wp->Index() < num_wp[bp.Index()]) {
+    SetupBlackKings();
+    SetupWhiteKings();
+    return false;
+  }
+  board.Clear(WhitePawn);
+  if (!bp.Increment(&bp_squares, &board)) {
+    if (bp.Index() < max_bp) {
+      SetupWhitePawns();
+      SetupBlackKings();
+      SetupWhiteKings();
+      return false;
+    }
+  }
+  board.Clear(BlackPawn);
+  bp.Reset();
+  SetupBlackPawns();
+  SetupWhitePawns();
+  SetupBlackKings();
+  SetupWhiteKings();
+  index = 0;
   return true;
 }
 
@@ -156,4 +188,52 @@ std::ostream& operator<<(std::ostream &out, const Enumerator& e) {
       << "bp: " << e.bp << std::endl << "wp: " << (*e.wp) << std::endl
       << "bk: " << e.bk << std::endl << "wk: " << e.wk << std::endl << e.board;
   return out;
+}
+
+void Enumerator::SetupBlackPawns() {
+  for (int i = 0; i < nbp; ++i) {
+    board.SetPiece(bp_squares[i], BlackPawn);
+  }
+}
+
+void Enumerator::SetupWhitePawns() {
+  if (wp) {
+    delete wp;
+  }
+  wp_squares.clear();
+  for (int i = 4 * (7 - rwp); i < 32; ++i) {
+    if (board.GetPiece(i) == Empty) {
+      wp_squares.push_back(i);
+    }
+  }
+  wp = new Combinator(wp_squares.size(), nwp);
+  for (int i = 0; i < nwp; ++i) {
+    board.SetPiece(wp_squares[i], WhitePawn);
+  }
+}
+
+void Enumerator::SetupBlackKings() {
+  bk.Reset();
+  bk_squares.clear();
+  for (int i = 0; i < 32; ++i) {
+    if (board.GetPiece(i) == Empty) {
+      bk_squares.push_back(i);
+    }
+  }
+  for (int i = 0; i < nbk; ++i) {
+    board.SetPiece(bk_squares[i], BlackKing);
+  }
+}
+
+void Enumerator::SetupWhiteKings() {
+  wk.Reset();
+  wk_squares.clear();
+  for (int i = 0; i < 32; ++i) {
+    if (board.GetPiece(i) == Empty) {
+      wk_squares.push_back(i);
+    }
+  }
+  for (int i = 0; i < nwk; ++i) {
+    board.SetPiece(wk_squares[i], WhiteKing);
+  }
 }

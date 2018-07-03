@@ -58,6 +58,14 @@ void Board::Clear() {
   }
 }
 
+void Board::Clear(Piece p) {
+  for (int i = 0; i < 32; ++i) {
+    if (pieces[i] == p) {
+      pieces[i] = Empty;
+    }
+  }
+}
+
 bool Board::operator==(const Board& other) const {
   for (int i = 0; i < 32; ++i) {
     if (pieces[i] != other.pieces[i]) {

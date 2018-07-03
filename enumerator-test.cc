@@ -23,3 +23,61 @@ TEST_CASE("Construct large enumerator", "[Enumerator]") {
   Enumerator g(3, 2, 1, 2, 5, 4);
   REQUIRE(g.NumPositions() == 313513200);
 }
+
+TEST_CASE("Increment small enumerator", "[Enumerator]") {
+  Enumerator e(0, 0, 1, 1, 2, 2);
+  REQUIRE(e.NumPositions() == 16);
+  REQUIRE(e == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   w   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   b   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "));
+  e.Increment();
+  REQUIRE(e == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   w   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   b   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "));
+  e.Increment(2);
+  REQUIRE(e == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   w "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   b   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "));
+  e.Increment();
+  REQUIRE(e == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   w   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   b   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "));
+  e.Increment(11);
+  REQUIRE(e == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   w "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " b   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "));
+  REQUIRE(e.Increment());
+  REQUIRE(e == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   w   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   b   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "));
+}
