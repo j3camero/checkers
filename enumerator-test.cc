@@ -143,6 +143,7 @@ TEST_CASE("4 pieces: one of each piece type", "[Enumerator]") {
 }
 
 TEST_CASE("Cycle of 28M+", "[Enumerator]") {
+  // Even larger benchmarks can be done using enumerator-benchmark.cc.
   Enumerator e(3, 2, 1, 2, 0, 0);
   REQUIRE(e == Board("   w   w   -   - "
                      " -   -   -   -   "
@@ -172,35 +173,3 @@ TEST_CASE("Cycle of 28M+", "[Enumerator]") {
                      " B   B   B   b   "));
   REQUIRE(!e.Increment());
 }
-
-// Disabled because it takes several seconds to run.
-// TEST_CASE("Cycle of 465M+", "[Enumerator]") {
-//   Enumerator e(3, 2, 1, 2, 6, 6);
-//   REQUIRE(e == Board("   -   -   -   - "
-//                      " -   -   -   b   "
-//                      "   -   -   -   - "
-//                      " -   -   -   -   "
-//                      "   -   -   -   - "
-//                      " -   -   -   -   "
-//                      "   w   w   W   - "
-//                      " B   B   B   W   "));
-//   REQUIRE(!e.Increment(465519599));
-//   REQUIRE(e == Board("   B   B   B   w "
-//                      " b   -   W   W   "
-//                      "   -   -   -   - "
-//                      " -   -   -   -   "
-//                      "   -   -   -   - "
-//                      " -   -   -   -   "
-//                      "   -   -   -   w "
-//                      " -   -   -   -   "));
-//   REQUIRE(e.Increment());
-//   REQUIRE(e == Board("   -   -   -   - "
-//                      " -   -   -   b   "
-//                      "   -   -   -   - "
-//                      " -   -   -   -   "
-//                      "   -   -   -   - "
-//                      " -   -   -   -   "
-//                      "   w   w   W   - "
-//                      " B   B   B   W   "));
-//   REQUIRE(!e.Increment());
-// }

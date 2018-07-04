@@ -1,3 +1,9 @@
+// A simple benchmark for the Enumerator object.
+//
+// It does one complete loop of a large Enumerator, incrementing through all
+// its positions. It's recommended to use the "time" program to get timing info:
+//
+//   time ./enumerator-benchmark
 #include "enumerator.h"
 
 int main(int argc, char **argv) {
