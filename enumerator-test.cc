@@ -1,12 +1,7 @@
 #include "catch.hpp"
 #include "enumerator.h"
 
-TEST_CASE("Construct small enumerator", "[Enumerator]") {
-  Enumerator e(0, 0, 1, 1, 2, 2);
-  REQUIRE(e.NumPositions() == 16);
-}
-
-TEST_CASE("Construct large enumerator", "[Enumerator]") {
+TEST_CASE("Number-of-positions calculation", "[Enumerator]") {
   // Sanity check against position counts from Lake 1994.
   Enumerator a(3, 2, 1, 2, 0, 0);
   REQUIRE(a.NumPositions() == 28501200);
@@ -24,7 +19,7 @@ TEST_CASE("Construct large enumerator", "[Enumerator]") {
   REQUIRE(g.NumPositions() == 313513200);
 }
 
-TEST_CASE("Increment small enumerator", "[Enumerator]") {
+TEST_CASE("Two pawns", "[Enumerator]") {
   Enumerator e(0, 0, 1, 1, 2, 2);
   REQUIRE(e.NumPositions() == 16);
   REQUIRE(e == Board("   -   -   -   - "
@@ -80,4 +75,101 @@ TEST_CASE("Increment small enumerator", "[Enumerator]") {
                      " -   -   -   b   "
                      "   -   -   -   - "
                      " -   -   -   -   "));
+  REQUIRE(!e.Increment());
+}
+
+TEST_CASE("Two kings", "[Enumerator]") {
+  Enumerator e(1, 1, 0, 0, 0, 0);
+  REQUIRE(e.NumPositions() == 992);
+  REQUIRE(e == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " B   W   -   -   "));
+  REQUIRE(!e.Increment(991));
+  REQUIRE(e == Board("   -   -   W   B "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "));
+  REQUIRE(e.Increment());
+  REQUIRE(e == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " B   W   -   -   "));
+  REQUIRE(!e.Increment());
+}
+
+TEST_CASE("4 pieces: one of each piece type", "[Enumerator]") {
+  Enumerator e(1, 1, 1, 1, 2, 2);
+  REQUIRE(e.NumPositions() == 13920);
+  REQUIRE(e == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   w   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   b   "
+                     "   -   -   -   - "
+                     " B   W   -   -   "));
+  REQUIRE(!e.Increment(13919));
+  REQUIRE(e == Board("   -   -   W   B "
+                     " -   -   -   -   "
+                     "   -   -   -   w "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " b   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "));
+  REQUIRE(e.Increment());
+  REQUIRE(e == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   w   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   b   "
+                     "   -   -   -   - "
+                     " B   W   -   -   "));
+  REQUIRE(!e.Increment());
+}
+
+TEST_CASE("Cycle of 28M+", "[Enumerator]") {
+  // Even larger benchmarks can be done using enumerator-benchmark.cc.
+  Enumerator e(3, 2, 1, 2, 0, 0);
+  REQUIRE(e == Board("   w   w   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   W   W   -   - "
+                     " B   B   B   b   "));
+  REQUIRE(!e.Increment(28501199));
+  REQUIRE(e == Board("   B   B   w   w "
+                     " -   W   W   B   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " b   -   -   -   "));
+  REQUIRE(e.Increment());
+  REQUIRE(e == Board("   w   w   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   W   W   -   - "
+                     " B   B   B   b   "));
+  REQUIRE(!e.Increment());
 }
