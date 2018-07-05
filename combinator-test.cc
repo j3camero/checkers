@@ -258,6 +258,22 @@ TEST_CASE("Deindex large", "[Combinator]") {
   REQUIRE(a == b);
 }
 
+TEST_CASE("Deindex and place pieces onto a board", "[Combinator]") {
+  Combinator c(8, 3);
+  Board b;
+  int p[] = {18, 16, 14, 12, 10, 8, 6, 4};
+  std::vector<int> permutation_vector(p, p + sizeof(p) / sizeof(p[0]));
+  c.Deindex(1, BlackKing, &permutation_vector, &b);
+  REQUIRE(b == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " B   -   B   -   "
+                     "   B   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "));
+}
+
 TEST_CASE("Reset combinator after incrementing", "[Combinator]") {
   Combinator a(19, 15);
   a.Increment(3857);

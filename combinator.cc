@@ -133,7 +133,14 @@ uint64 Combinator::Index() const {
   return index;
 }
 
-void Combinator::Deindex(uint64 new_index) {
+void Combinator::Deindex(const uint64 new_index) {
+  Deindex(new_index, Empty, NULL, NULL);
+}
+
+void Combinator::Deindex(const uint64 new_index,
+                         Piece piece,
+                         const std::vector<int>* permutation_vector,
+                         Board* board_to_update) {
   if (new_index >= Choose(n, k)) {
     throw "Index is too large.";
   }
@@ -146,6 +153,10 @@ void Combinator::Deindex(uint64 new_index) {
       ++c;
     }
     counters[i] = c;
+    if (permutation_vector && board_to_update) {
+      const int square_num = permutation_vector->at(c);
+      board_to_update->SetPiece(square_num, piece);
+    }
     ++c;
   }
 }

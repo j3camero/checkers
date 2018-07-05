@@ -44,7 +44,14 @@ class Combinator {
   uint64 Index() const;
 
   // Sets the counters to correspond to the index new_index.
-  void Deindex(uint64 new_index);
+  void Deindex(const uint64 new_index);
+
+  // Sets the counters to correspond to the index new_index. Also places
+  // pieces of the given piece type on a checkerboard.
+  void Deindex(const uint64 new_index,
+               Piece piece,
+               const std::vector<int>* permutation_vector,
+               Board* board_to_update);
 
   // Resets the Combinator to its initial position, at index zero.
   void Reset();

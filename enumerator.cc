@@ -51,8 +51,8 @@ Enumerator::Enumerator(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp)
     if (avail_rest > 0) {
       num_wp[i] -= Choose(avail_rest, nwp);
     }
-    max_wp += num_wp[i];
     sum_wp.push_back(max_wp);
+    max_wp += num_wp[i];
     bp.Increment(&bp_squares, &board);
   }
   // max_bp is not used to calcualte the total because max_wp is already the
@@ -127,7 +127,61 @@ uint64 Enumerator::Index() const {
 }
 
 void Enumerator::Deindex(uint64 new_index) {
-  // Make deindex.
+  if (new_index >= num_positions) {
+    throw "Index is too large.";
+  }
+  board.Clear();
+  index = new_index;
+  // Use division & modulus to find the indices for the kings.
+  const uint64 wkr = new_index / max_wk;
+  const uint64 bkr = wkr / max_bk;
+  const uint64 wk_index = new_index - max_wk * wkr;
+  const uint64 bk_index = wkr - max_bk * bkr;
+  // Quickly find out the pawn indices by binary searching sum_wp. This
+  // can't be done using division & modulus because the white pawn cycles
+  // have differing lengths.
+  uint64 lo = 0;
+  uint64 hi = sum_wp.size();
+  while (hi - lo > 1) {
+    uint64 mid = (hi + lo) / 2;
+    if (bkr < sum_wp[mid]) {
+      hi = mid;
+    } else {
+      lo = mid;
+    }
+  }
+  const uint64 bp_index = lo;
+  const uint64 wp_index = bkr - sum_wp[bp_index];
+  // Black pawns.
+  bp.Deindex(bp_index, BlackPawn, &bp_squares, &board);
+  // White pawns.
+  if (wp) {
+    delete wp;
+  }
+  wp_squares.clear();
+  for (int i = 4 * (7 - rwp); i < 32; ++i) {
+    if (board.GetPiece(i) == Empty) {
+      wp_squares.push_back(i);
+    }
+  }
+  wp = new Combinator(wp_squares.size(), nwp);
+  wp->Deindex(wp_index, WhitePawn, &wp_squares, &board);
+  // Black kings.
+  bk_squares.clear();
+  for (int i = 0; i < 32; ++i) {
+    if (board.GetPiece(i) == Empty) {
+      bk_squares.push_back(i);
+    }
+  }
+  bk.Deindex(bk_index, BlackKing, &bk_squares, &board);
+  // White kings.
+  wk_squares.clear();
+  for (int i = 0; i < 32; ++i) {
+    if (board.GetPiece(i) == Empty) {
+      wk_squares.push_back(i);
+    }
+  }
+  wk.Deindex(wk_index, WhiteKing, &wk_squares, &board);
 }
 
 int Enumerator::NumBlackKings() const {
