@@ -1,21 +1,34 @@
 #include "enumerator.h"
 
+#include <fstream>
 #include <vector>
 
 #include "board.h"
 #include "combinator.h"
+#include "piece-count.h"
 #include "types.h"
 
 Enumerator::Enumerator(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp)
-  // Big-ass initializer list.
-  : nbk(nbk), nwk(nwk), nbp(nbp), nwp(nwp), rbp(rbp), rwp(rwp), index(0),
+  // Initializer list.
+  : pc(nbk, nwk, nbp, nwp), rbp(rbp), rwp(rwp), index(0),
     bp(4 * (rbp + 1), nbp), bk(32 - nbp - nwp, nbk),
     wk(32 - nbp - nwp - nbk, nwk) {
-  // Here's the actual start of the function.
+  Init();
+}
+
+Enumerator::Enumerator(PieceCount pc, int rbp, int rwp)
+  // Initializer list.
+  : pc(pc), rbp(rbp), rwp(rwp), index(0),
+    bp(4 * (rbp + 1), pc.nbp), bk(32 - pc.nbp - pc.nwp, pc.nbk),
+    wk(32 - pc.nbp - pc.nwp - pc.nbk, pc.nwk) {
+  Init();
+}
+
+void Enumerator::Init() {
   wp = NULL;
-  max_bp = Choose(4 * (rbp + 1), nbp);
+  max_bp = Choose(4 * (rbp + 1), pc.nbp);
   if (rbp > 0) {
-    max_bp -= Choose(4 * rbp, nbp);
+    max_bp -= Choose(4 * rbp, pc.nbp);
   }
   max_bk = bk.NumCombinations();
   max_wk = wk.NumCombinations();
@@ -47,9 +60,9 @@ Enumerator::Enumerator(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp)
         ++avail_rest;
       }
     }
-    num_wp.push_back(Choose(avail_rank + avail_rest, nwp));
+    num_wp.push_back(Choose(avail_rank + avail_rest, pc.nwp));
     if (avail_rest > 0) {
-      num_wp[i] -= Choose(avail_rest, nwp);
+      num_wp[i] -= Choose(avail_rest, pc.nwp);
     }
     sum_wp.push_back(max_wp);
     max_wp += num_wp[i];
@@ -164,7 +177,7 @@ void Enumerator::Deindex(uint64 new_index) {
       wp_squares.push_back(i);
     }
   }
-  wp = new Combinator(wp_squares.size(), nwp);
+  wp = new Combinator(wp_squares.size(), pc.nwp);
   wp->Deindex(wp_index, WhitePawn, &wp_squares, &board);
   // Black kings.
   bk_squares.clear();
@@ -184,33 +197,8 @@ void Enumerator::Deindex(uint64 new_index) {
   wk.Deindex(wk_index, WhiteKing, &wk_squares, &board);
 }
 
-int Enumerator::NumBlackKings() const {
-  return nbk;
-}
-
-int Enumerator::NumWhiteKings() const {
-  return nwk;
-}
-
-int Enumerator::NumBlackPawns() const {
-  return nbp;
-}
-
-int Enumerator::NumWhitePawns() const {
-  return nwp;
-}
-
-int Enumerator::LeadingBlackPawnRank() const {
-  return rbp;
-}
-
-int Enumerator::LeadingWhitePawnRank() const {
-  return rwp;
-}
-
 bool Enumerator::operator==(const Enumerator& other) const {
-  if (nbk != other.nbk || nwk != other.nwk || nbp != other.nbp ||
-      nwp != other.nwp || rbp != other.rbp || rwp != other.rwp) {
+  if (pc != other.pc || rbp != other.rbp || rwp != other.rwp) {
     return false;
   }
   if (board != other.board) {
@@ -238,15 +226,15 @@ bool Enumerator::operator!=(const Board& b) const {
 }
 
 std::ostream& operator<<(std::ostream &out, const Enumerator& e) {
-  out << "Enumerator(" << e.nbk << e.nwk << e.nbp << e.nwp << "."
-      << e.rbp << e.rwp << ") index: " << e.Index() << std::endl
+  out << "Enumerator(" << e.pc << "." << e.rbp << e.rwp
+      << ") index: " << e.Index() << std::endl
       << "bp: " << e.bp << std::endl << "wp: " << (*e.wp) << std::endl
       << "bk: " << e.bk << std::endl << "wk: " << e.wk << std::endl << e.board;
   return out;
 }
 
 void Enumerator::SetupBlackPawns() {
-  for (int i = 0; i < nbp; ++i) {
+  for (int i = 0; i < pc.nbp; ++i) {
     board.SetPiece(bp_squares[i], BlackPawn);
   }
 }
@@ -261,8 +249,8 @@ void Enumerator::SetupWhitePawns() {
       wp_squares.push_back(i);
     }
   }
-  wp = new Combinator(wp_squares.size(), nwp);
-  for (int i = 0; i < nwp; ++i) {
+  wp = new Combinator(wp_squares.size(), pc.nwp);
+  for (int i = 0; i < pc.nwp; ++i) {
     board.SetPiece(wp_squares[i], WhitePawn);
   }
 }
@@ -275,7 +263,7 @@ void Enumerator::SetupBlackKings() {
       bk_squares.push_back(i);
     }
   }
-  for (int i = 0; i < nbk; ++i) {
+  for (int i = 0; i < pc.nbk; ++i) {
     board.SetPiece(bk_squares[i], BlackKing);
   }
 }
@@ -288,7 +276,7 @@ void Enumerator::SetupWhiteKings() {
       wk_squares.push_back(i);
     }
   }
-  for (int i = 0; i < nwk; ++i) {
+  for (int i = 0; i < pc.nwk; ++i) {
     board.SetPiece(wk_squares[i], WhiteKing);
   }
 }
