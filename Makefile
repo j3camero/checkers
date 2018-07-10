@@ -19,6 +19,7 @@ test-main: test-main.o \
            board.o board-test.o \
            combinator.o combinator-test.o \
            enumerator.o enumerator-test.o \
-           piece-count.o piece-count-test.o \
+           four-tuple.o four-tuple-test.o \
+           six-tuple.o six-tuple-test.o \
            solution-buffer.o solution-buffer-test.o \
 					 types-test.o

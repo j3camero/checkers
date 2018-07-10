@@ -5,7 +5,7 @@
 
 #include "board.h"
 #include "combinator.h"
-#include "piece-count.h"
+#include "four-tuple.h"
 #include "types.h"
 
 Enumerator::Enumerator(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp)
@@ -16,7 +16,7 @@ Enumerator::Enumerator(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp)
   Init();
 }
 
-Enumerator::Enumerator(PieceCount pc, int rbp, int rwp)
+Enumerator::Enumerator(FourTuple pc, int rbp, int rwp)
   // Initializer list.
   : pc(pc), rbp(rbp), rwp(rwp), index(0),
     bp(4 * (rbp + 1), pc.nbp), bk(32 - pc.nbp - pc.nwp, pc.nbk),

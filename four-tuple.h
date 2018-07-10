@@ -1,28 +1,32 @@
-#ifndef _PIECE_COUNT_H_
-#define _PIECE_COUNT_H_
+#ifndef _FOUR_TUPLE_H_
+#define _FOUR_TUPLE_H_
 
 #include <fstream>
 
 // A 4-tuple of integers. One for each piece type.
-class PieceCount {
+//   nbk - the number of black kings.
+//   nwk - the number of white kings.
+//   nbp - the number of black pawns.
+//   nwp - the number of white pawns.
+class FourTuple {
  public:
   // Constructor.
-  PieceCount(int nbk, int nwk, int nbp, int nwp);
+  FourTuple(int nbk, int nwk, int nbp, int nwp);
 
   // Copy constructor.
-  PieceCount(const PieceCount& p);
+  FourTuple(const FourTuple& p);
 
   // Reverses the colors.
-  PieceCount Mirror();
+  FourTuple Mirror();
 
   // Operators.
-  bool operator==(const PieceCount& other) const;
-  bool operator!=(const PieceCount& other) const;
-  bool operator<(const PieceCount& other) const;
+  bool operator==(const FourTuple& other) const;
+  bool operator!=(const FourTuple& other) const;
+  bool operator<(const FourTuple& other) const;
 
   // Outputs as a 4-character string of digits with no newline, in the order:
   // "nbk nwk nbp nwp" as described in Lake (1994).
-  friend std::ostream& operator<<(std::ostream &out, const PieceCount& e);
+  friend std::ostream& operator<<(std::ostream &out, const FourTuple& e);
 
   // These variables are exposed as public. The usual OOP convention is to have
   // these be private and expose get and set functions instead. However, these

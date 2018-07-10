@@ -1,34 +1,34 @@
-#include "piece-count.h"
+#include "four-tuple.h"
 
 #include <fstream>
 
-PieceCount::PieceCount(int nbk, int nwk, int nbp, int nwp)
+FourTuple::FourTuple(int nbk, int nwk, int nbp, int nwp)
   : nbk(nbk), nwk(nwk), nbp(nbp), nwp(nwp) {
   // Body is empty because of initializer lists.
 }
 
-PieceCount::PieceCount(const PieceCount& p) {
+FourTuple::FourTuple(const FourTuple& p) {
   nbk = p.nbk;
   nwk = p.nwk;
   nbp = p.nbp;
   nwp = p.nwp;
 }
 
-PieceCount PieceCount::Mirror() {
+FourTuple FourTuple::Mirror() {
   // Black and white are reversed.
-  return PieceCount(nwk, nbk, nwp, nbp);
+  return FourTuple(nwk, nbk, nwp, nbp);
 }
 
-bool PieceCount::operator==(const PieceCount& other) const {
+bool FourTuple::operator==(const FourTuple& other) const {
   return (nbk == other.nbk && nwk == other.nwk &&
           nbp == other.nbp && nwp == other.nwp);
 }
 
-bool PieceCount::operator!=(const PieceCount& other) const {
+bool FourTuple::operator!=(const FourTuple& other) const {
   return !(*this == other);
 }
 
-bool PieceCount::operator<(const PieceCount& other) const {
+bool FourTuple::operator<(const FourTuple& other) const {
   if (nbp < other.nbp) return true;
   if (nbp > other.nbp) return false;
   if (nwp < other.nwp) return true;
@@ -40,7 +40,7 @@ bool PieceCount::operator<(const PieceCount& other) const {
   return false;
 }
 
-std::ostream& operator<<(std::ostream &out, const PieceCount& p) {
+std::ostream& operator<<(std::ostream &out, const FourTuple& p) {
   out << p.nwk << p.nbk << p.nbp << p.nwp;
   return out;
 }
