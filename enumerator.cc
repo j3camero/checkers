@@ -5,30 +5,36 @@
 
 #include "board.h"
 #include "combinator.h"
-#include "four-tuple.h"
+#include "six-tuple.h"
 #include "types.h"
 
 Enumerator::Enumerator(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp)
   // Initializer list.
-  : pc(nbk, nwk, nbp, nwp), rbp(rbp), rwp(rwp), index(0),
-    bp(4 * (rbp + 1), nbp), bk(32 - nbp - nwp, nbk),
+  : db(nbk, nwk, nbp, nwp, rbp, rwp),
+    index(0),
+    bp(4 * (rbp + 1), nbp),
+    bk(32 - nbp - nwp, nbk),
     wk(32 - nbp - nwp - nbk, nwk) {
+  // The body of the function starts here.
   Init();
 }
 
-Enumerator::Enumerator(FourTuple pc, int rbp, int rwp)
+Enumerator::Enumerator(SixTuple db)
   // Initializer list.
-  : pc(pc), rbp(rbp), rwp(rwp), index(0),
-    bp(4 * (rbp + 1), pc.nbp), bk(32 - pc.nbp - pc.nwp, pc.nbk),
-    wk(32 - pc.nbp - pc.nwp - pc.nbk, pc.nwk) {
+  : db(db),
+    index(0),
+    bp(4 * (db.rbp + 1), db.nbp),
+    bk(32 - db.nbp - db.nwp, db.nbk),
+    wk(32 - db.nbp - db.nwp - db.nbk, db.nwk) {
+  // The body of the function starts here.
   Init();
 }
 
 void Enumerator::Init() {
   wp = NULL;
-  max_bp = Choose(4 * (rbp + 1), pc.nbp);
-  if (rbp > 0) {
-    max_bp -= Choose(4 * rbp, pc.nbp);
+  max_bp = Choose(4 * (db.rbp + 1), db.nbp);
+  if (db.rbp > 0) {
+    max_bp -= Choose(4 * db.rbp, db.nbp);
   }
   max_bk = bk.NumCombinations();
   max_wk = wk.NumCombinations();
@@ -39,7 +45,7 @@ void Enumerator::Init() {
   // this system instead. It will result in all the same endgame database
   // "slices" with the same numbers of positions each - potentially ordered
   // differently. The end result will be the same.
-  for (int i = 4 * rbp + 3; i >= 0; --i) {
+  for (int i = 4 * db.rbp + 3; i >= 0; --i) {
     bp_squares.push_back(i);
   }
   SetupBlackPawns();
@@ -47,7 +53,7 @@ void Enumerator::Init() {
   // each, calculate the number of possible arrangements of white pawns.
   max_wp = 0;
   for (uint64 i = 0; i < max_bp; ++i) {
-    const int min_square = 4 * (7 - rwp);
+    const int min_square = 4 * (7 - db.rwp);
     int avail_rank = 0;
     for (int j = 0; j < 4; ++j) {
       if (board.GetPiece(min_square + j) == Empty) {
@@ -60,9 +66,9 @@ void Enumerator::Init() {
         ++avail_rest;
       }
     }
-    num_wp.push_back(Choose(avail_rank + avail_rest, pc.nwp));
+    num_wp.push_back(Choose(avail_rank + avail_rest, db.nwp));
     if (avail_rest > 0) {
-      num_wp[i] -= Choose(avail_rest, pc.nwp);
+      num_wp[i] -= Choose(avail_rest, db.nwp);
     }
     sum_wp.push_back(max_wp);
     max_wp += num_wp[i];
@@ -172,12 +178,12 @@ void Enumerator::Deindex(uint64 new_index) {
     delete wp;
   }
   wp_squares.clear();
-  for (int i = 4 * (7 - rwp); i < 32; ++i) {
+  for (int i = 4 * (7 - db.rwp); i < 32; ++i) {
     if (board.GetPiece(i) == Empty) {
       wp_squares.push_back(i);
     }
   }
-  wp = new Combinator(wp_squares.size(), pc.nwp);
+  wp = new Combinator(wp_squares.size(), db.nwp);
   wp->Deindex(wp_index, WhitePawn, &wp_squares, &board);
   // Black kings.
   bk_squares.clear();
@@ -198,18 +204,23 @@ void Enumerator::Deindex(uint64 new_index) {
 }
 
 bool Enumerator::operator==(const Enumerator& other) const {
-  if (pc != other.pc || rbp != other.rbp || rwp != other.rwp) {
+  if (db != other.db) {
+    // The other iterator is iterating a different database slice.
     return false;
   }
   if (board != other.board) {
+    // The checkers on the other board are arranged differently.
     return false;
   }
   if (!wp || !other.wp) {
+    // White pawns are not initialized. This shouldn't happen.
     return false;
   }
   if (bp != other.bp || *wp != *other.wp || bk != other.bk || wk != other.wk) {
+    // One of the four iterators is at a different position.
     return false;
   }
+  // If we get here, then the two Enumerators are equal.
   return true;
 }
 
@@ -226,15 +237,14 @@ bool Enumerator::operator!=(const Board& b) const {
 }
 
 std::ostream& operator<<(std::ostream &out, const Enumerator& e) {
-  out << "Enumerator(" << e.pc << "." << e.rbp << e.rwp
-      << ") index: " << e.Index() << std::endl
+  out << "Enumerator(" << e.db << ") index: " << e.Index() << std::endl
       << "bp: " << e.bp << std::endl << "wp: " << (*e.wp) << std::endl
       << "bk: " << e.bk << std::endl << "wk: " << e.wk << std::endl << e.board;
   return out;
 }
 
 void Enumerator::SetupBlackPawns() {
-  for (int i = 0; i < pc.nbp; ++i) {
+  for (int i = 0; i < db.nbp; ++i) {
     board.SetPiece(bp_squares[i], BlackPawn);
   }
 }
@@ -244,13 +254,13 @@ void Enumerator::SetupWhitePawns() {
     delete wp;
   }
   wp_squares.clear();
-  for (int i = 4 * (7 - rwp); i < 32; ++i) {
+  for (int i = 4 * (7 - db.rwp); i < 32; ++i) {
     if (board.GetPiece(i) == Empty) {
       wp_squares.push_back(i);
     }
   }
-  wp = new Combinator(wp_squares.size(), pc.nwp);
-  for (int i = 0; i < pc.nwp; ++i) {
+  wp = new Combinator(wp_squares.size(), db.nwp);
+  for (int i = 0; i < db.nwp; ++i) {
     board.SetPiece(wp_squares[i], WhitePawn);
   }
 }
@@ -263,7 +273,7 @@ void Enumerator::SetupBlackKings() {
       bk_squares.push_back(i);
     }
   }
-  for (int i = 0; i < pc.nbk; ++i) {
+  for (int i = 0; i < db.nbk; ++i) {
     board.SetPiece(bk_squares[i], BlackKing);
   }
 }
@@ -276,7 +286,7 @@ void Enumerator::SetupWhiteKings() {
       wk_squares.push_back(i);
     }
   }
-  for (int i = 0; i < pc.nwk; ++i) {
+  for (int i = 0; i < db.nwk; ++i) {
     board.SetPiece(wk_squares[i], WhiteKing);
   }
 }

@@ -6,14 +6,14 @@
 
 #include "board.h"
 #include "combinator.h"
-#include "four-tuple.h"
+#include "six-tuple.h"
 #include "types.h"
 
 // Enumerates a set of related checkerboard positions.
 class Enumerator {
  public:
   Enumerator(int nbp, int nwp, int nbk, int nwk, int rbp, int rwp);
-  Enumerator(FourTuple pc, int rbp, int rwp);
+  Enumerator(SixTuple db);
   ~Enumerator();
 
   // Returns the total number of positions enumerated by this enumerator.
@@ -73,9 +73,9 @@ class Enumerator {
   // already placed.
   void SetupWhiteKings();
 
-  FourTuple pc;  // Contains nbp, nwp, nbk, nwk.
-  int rbp;  // Rank of the leading black pawn (0-6).
-  int rwp;  // Rank of the leading white pawn (0-6).
+  // Contains [nbp, nwp, nbk, nwk, rbp, rwp]. Represents the name of the current
+  // database slice. ex: 3212.43
+  SixTuple db;
   uint64 num_positions;  // The total number of positions enumerated.
   uint64 max_bp;  // Number of arrangements of black pawns.
   // Number of arrangements of white pawns, summed over every possible
