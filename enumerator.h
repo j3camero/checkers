@@ -12,7 +12,7 @@
 // Enumerates a set of related checkerboard positions.
 class Enumerator {
  public:
-  Enumerator(int nbp, int nwp, int nbk, int nwk, int rbp, int rwp);
+  Enumerator(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp);
   Enumerator(SixTuple db);
   ~Enumerator();
 
