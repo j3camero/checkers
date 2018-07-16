@@ -6,6 +6,7 @@
 
 #include "board.h"
 #include "combinator.h"
+#include "pawn-cache.h"
 #include "six-tuple.h"
 #include "types.h"
 
@@ -52,9 +53,6 @@ class Enumerator {
   friend std::ostream& operator<<(std::ostream &out, const Enumerator& e);
 
  private:
-  // Does most of the work of the constructor.
-  void Init();
-
   // Set up the black pawns on the board. Assumes that the board stars empty.
   void SetupBlackPawns();
 
@@ -76,18 +74,6 @@ class Enumerator {
   // Contains [nbp, nwp, nbk, nwk, rbp, rwp]. Represents the name of the current
   // database slice. ex: 3212.43
   SixTuple db;
-  uint64 num_positions;  // The total number of positions enumerated.
-  uint64 max_bp;  // Number of arrangements of black pawns.
-  // Number of arrangements of white pawns, summed over every possible
-  // arrangement of black pawns.
-  uint64 max_wp;
-  uint64 max_bk;  // Number of arrangements of black kings.
-  uint64 max_wk;  // Number of arrangements of white kings.
-  // Number of arrangements of white pawns. One for each different arrangement
-  // of black pawns.
-  std::vector<uint64> num_wp;
-  // Cumulative sum of num_wp. Useful for faster deindexing.
-  std::vector<uint64> sum_wp;
   Board board;  // The checkerboard.
   // The current index. Even though this could be re-calculated using the
   // combinators, it is stored here for speed.
@@ -101,6 +87,10 @@ class Enumerator {
   std::vector<int> wp_squares;
   std::vector<int> bk_squares;
   std::vector<int> wk_squares;
+  // Stores the number of arrangements of white pawns for each arrangement of
+  // black pawns. Used for indexing and deindexing.
+  const PawnCache& pc;
+  uint64 num_positions;  // The total number of positions enumerated.
 };
 
 #endif

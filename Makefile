@@ -10,6 +10,9 @@ enumerator-benchmark: enumerator-benchmark.o \
                       board.o \
                       combinator.o \
                       enumerator.o \
+											four-tuple.o \
+											pawn-cache.o \
+											six-tuple.o
 
 test: test-main
 	./test-main
@@ -20,6 +23,7 @@ test-main: test-main.o \
            combinator.o combinator-test.o \
            enumerator.o enumerator-test.o \
            four-tuple.o four-tuple-test.o \
+           pawn-cache.o pawn-cache-test.o \
            six-tuple.o six-tuple-test.o \
            solution-buffer.o solution-buffer-test.o \
 					 types-test.o
