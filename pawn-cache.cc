@@ -54,17 +54,16 @@ PawnCache::PawnCache(const SixTuple& db) {
 }
 
 // This comparison operator imposes a strict ordering on the six-tuples, as
-// required by std::map.
-struct SixTupleCompare {
+// required by std::map. It considers only nbp, nwp, rbp, and rwp - ignoring
+// nbk and nwk since only the pawns are relevant here. Records for different
+// values of nbk and nwk would have the same values anyway, so the cache gains
+// effectiveness by ignoring the kings.
+struct PawnCacheCompare {
    bool operator() (const SixTuple& a, const SixTuple& b) const {
        if (a.nbp < b.nbp) return true;
        if (a.nbp > b.nbp) return false;
        if (a.nwp < b.nwp) return true;
        if (a.nwp > b.nwp) return false;
-       if (a.nbk < b.nbk) return true;
-       if (a.nbk > b.nbk) return false;
-       if (a.nwk < b.nwk) return true;
-       if (a.nwk > b.nwk) return false;
        if (a.rbp < b.rbp) return true;
        if (a.rbp > b.rbp) return false;
        if (a.rwp < b.rwp) return true;
@@ -74,10 +73,10 @@ struct SixTupleCompare {
 };
 
 // This is the global in-memory pawn cache.
-std::map<SixTuple, PawnCache, SixTupleCompare> cache;
+std::map<SixTuple, PawnCache, PawnCacheCompare> cache;
 
 const PawnCache& PawnCache::Get(const SixTuple& db) {
-  std::map<SixTuple, PawnCache, SixTupleCompare>::iterator it = cache.find(db);
+  std::map<SixTuple, PawnCache, PawnCacheCompare>::iterator it = cache.find(db);
   if (it == cache.end()) {
     // No entry was found in the cache. Create it. This is the expensive
     // calculation that that pawn cache is designed to avoid.
