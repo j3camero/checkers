@@ -14,11 +14,13 @@ Enumerator::Enumerator(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp)
   : db(nbk, nwk, nbp, nwp, rbp, rwp),
     index(0),
     bp(4 * (rbp + 1), nbp),
+    wp(NULL),
     bk(32 - nbp - nwp, nbk),
     wk(32 - nbp - nwp - nbk, nwk),
-    pc(PawnCache::Get(SixTuple(nbk, nwk, nbp, nwp, rbp, rwp))) {
+    pc(PawnCache::Get(SixTuple(nbk, nwk, nbp, nwp, rbp, rwp))),
+    num_positions(pc.MaxWP() * bk.NumCombinations() * wk.NumCombinations()) {
   // The body of the function starts here.
-  Init();
+  Reset();
 }
 
 Enumerator::Enumerator(SixTuple db)
@@ -26,19 +28,12 @@ Enumerator::Enumerator(SixTuple db)
   : db(db),
     index(0),
     bp(4 * (db.rbp + 1), db.nbp),
+    wp(NULL),
     bk(32 - db.nbp - db.nwp, db.nbk),
     wk(32 - db.nbp - db.nwp - db.nbk, db.nwk),
-    pc(PawnCache::Get(db)) {
+    pc(PawnCache::Get(db)),
+    num_positions(pc.MaxWP() * bk.NumCombinations() * wk.NumCombinations()) {
   // The body of the function starts here.
-  Init();
-}
-
-void Enumerator::Init() {
-  wp = NULL;
-  // MaxBP is not used to calcualte the total because MaxWP is already the
-  // total summed over every arrangement of black pawns.
-  num_positions = pc.MaxWP() * bk.NumCombinations() * wk.NumCombinations();
-  // Reset the pieces to their starting positions.
   Reset();
 }
 

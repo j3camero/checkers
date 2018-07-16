@@ -53,9 +53,6 @@ class Enumerator {
   friend std::ostream& operator<<(std::ostream &out, const Enumerator& e);
 
  private:
-  // Does most of the work of the constructor.
-  void Init();
-
   // Set up the black pawns on the board. Assumes that the board stars empty.
   void SetupBlackPawns();
 
@@ -90,10 +87,10 @@ class Enumerator {
   std::vector<int> wp_squares;
   std::vector<int> bk_squares;
   std::vector<int> wk_squares;
-  uint64 num_positions;  // The total number of positions enumerated.
   // Stores the number of arrangements of white pawns for each arrangement of
   // black pawns. Used for indexing and deindexing.
   const PawnCache& pc;
+  uint64 num_positions;  // The total number of positions enumerated.
 };
 
 #endif
