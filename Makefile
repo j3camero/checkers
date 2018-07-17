@@ -4,7 +4,7 @@ CPPFLAGS = -Wall #-O3
 all: test
 
 clean:
-	rm -rf *.o test-main
+	rm -rf *.o enumerator-benchmark test-main
 
 enumerator-benchmark: enumerator-benchmark.o \
                       board.o \
