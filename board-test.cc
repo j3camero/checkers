@@ -1,6 +1,8 @@
 #include "board.h"
 #include "catch.hpp"
 
+#include "six-tuple.h"
+
 TEST_CASE("Get and Set", "[Board]") {
   Board b;
   REQUIRE(b.GetPiece(31) == Empty);
@@ -105,4 +107,47 @@ TEST_CASE("Human readable output", "[Board]") {
   // right data.
   Board b(a.HumanReadable());
   REQUIRE(a == b);
+}
+
+TEST_CASE("WhichDatabaseSlice", "[Board]") {
+  // Typical case. One of each piece type.
+  REQUIRE(Board(
+    "   -   -   -   B "
+    " -   -   -   -   "
+    "   -   b   -   - "
+    " -   w   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " W   -   -   -   ").WhichDatabaseSlice() == SixTuple(1, 1, 1, 1, 5, 3));
+  // Only kings.
+  REQUIRE(Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   W   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   B   -   "
+    "   -   -   -   - "
+    " -   -   -   -   ").WhichDatabaseSlice() == SixTuple(1, 1, 0, 0, 0, 0));
+  // Only pawns.
+  REQUIRE(Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   w   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   b   -   "
+    "   -   -   -   - "
+    " -   -   -   -   ").WhichDatabaseSlice() == SixTuple(0, 0, 1, 1, 2, 2));
+  // Many pieces.
+  REQUIRE(Board(
+    "   -   B   W   - "
+    " -   b   -   B   "
+    "   w   -   -   - "
+    " -   -   W   -   "
+    "   -   W   -   - "
+    " -   -   -   w   "
+    "   -   B   -   - "
+    " -   W   -   -   ").WhichDatabaseSlice() == SixTuple(3, 4, 1, 2, 6, 5));
 }

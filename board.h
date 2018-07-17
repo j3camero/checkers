@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 
+#include "six-tuple.h"
+
 enum Piece {
   Empty = 0,
   WhiteKing = 1,
@@ -32,6 +34,9 @@ class Board {
 
   // Removes all pices of a certain type from the board.
   void Clear(Piece p);
+
+  // Determine which database slice this board position belongs to.
+  SixTuple WhichDatabaseSlice() const;
 
   // Equality operator.
   bool operator==(const Board& other) const;

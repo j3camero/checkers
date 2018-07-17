@@ -1,5 +1,7 @@
 #include "board.h"
 
+#include "six-tuple.h"
+
 // The way the spaces on the checkerboard are ordered on a printed page.
 const int human_readable_ordering[] = {
   28, 29, 30, 31,
@@ -64,6 +66,35 @@ void Board::Clear(Piece p) {
       pieces[i] = Empty;
     }
   }
+}
+
+SixTuple Board::WhichDatabaseSlice() const {
+  SixTuple db(0, 0, 0, 0, 0, 0);
+  for (int i = 0; i < 32; ++i) {
+    switch (pieces[i]) {
+      case BlackPawn:
+        db.rbp = i / 4;
+        ++db.nbp;
+        break;
+      case WhitePawn:
+        if (db.rwp == 0) {
+          db.rwp = (31 - i) / 4;
+        }
+        ++db.nwp;
+        break;
+      case BlackKing:
+        ++db.nbk;
+        break;
+      case WhiteKing:
+        ++db.nwk;
+        break;
+      case Empty:
+      default:
+        // Do nothing.
+        break;
+    };
+  }
+  return db;
 }
 
 bool Board::operator==(const Board& other) const {
