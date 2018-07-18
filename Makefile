@@ -12,6 +12,7 @@ enumerator-benchmark: enumerator-benchmark.o \
                       enumerator.o \
 											four-tuple.o \
 											pawn-cache.o \
+											seven-tuple.o \
 											six-tuple.o
 
 test: test-main
@@ -24,6 +25,7 @@ test-main: test-main.o \
            enumerator.o enumerator-test.o \
            four-tuple.o four-tuple-test.o \
            pawn-cache.o pawn-cache-test.o \
+           seven-tuple.o seven-tuple-test.o \
            six-tuple.o six-tuple-test.o \
            solution-buffer.o solution-buffer-test.o \
 					 types-test.o

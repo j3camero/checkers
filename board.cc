@@ -97,6 +97,16 @@ SixTuple Board::WhichDatabaseSlice() const {
   return db;
 }
 
+uint64 Board::Index(const SixTuple& db) {
+  return 0;
+}
+
+SevenTuple Board::Index() {
+  SixTuple db = WhichDatabaseSlice();
+  uint64 index = Index(db);
+  return SevenTuple(db, index);
+}
+
 bool Board::operator==(const Board& other) const {
   for (int i = 0; i < 32; ++i) {
     if (pieces[i] != other.pieces[i]) {

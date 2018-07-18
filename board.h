@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include "seven-tuple.h"
 #include "six-tuple.h"
 
 enum Piece {
@@ -37,6 +38,16 @@ class Board {
 
   // Determine which database slice this board position belongs to.
   SixTuple WhichDatabaseSlice() const;
+
+  // Determine the index of this board position. The result is not defined if
+  // the provided db does not match WhichDatabaseSlice(). Use this function
+  // only if the caller is sure they know the correct SixTuple to use. If not,
+  // use the overload of Index() that takes no arguments instead.
+  uint64 Index(const SixTuple& db);
+
+  // Determine the index of this board position, including which database slice.
+  // Returns a SevenTuple containing which DB slice and which index.
+  SevenTuple Index();
 
   // Equality operator.
   bool operator==(const Board& other) const;
