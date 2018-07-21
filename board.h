@@ -43,11 +43,11 @@ class Board {
   // the provided db does not match WhichDatabaseSlice(). Use this function
   // only if the caller is sure they know the correct SixTuple to use. If not,
   // use the overload of Index() that takes no arguments instead.
-  uint64 Index(const SixTuple& db);
+  uint64 Index(const SixTuple& db) const;
 
   // Determine the index of this board position, including which database slice.
   // Returns a SevenTuple containing which DB slice and which index.
-  SevenTuple Index();
+  SevenTuple Index() const;
 
   // Equality operator.
   bool operator==(const Board& other) const;

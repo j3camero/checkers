@@ -149,6 +149,10 @@ void Enumerator::Deindex(uint64 new_index) {
   wk.Deindex(wk_index, WhiteKing, &wk_squares, &board);
 }
 
+const Board& Enumerator::GetBoard() const {
+  return board;
+}
+
 bool Enumerator::operator==(const Enumerator& other) const {
   if (db != other.db) {
     // The other iterator is iterating a different database slice.

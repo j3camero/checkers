@@ -39,6 +39,9 @@ class Enumerator {
   // Sets the state to correspond to the index new_index.
   void Deindex(uint64 new_index);
 
+  // Gets a reference to the Board. It's immutable but can be copied if needed.
+  const Board& GetBoard() const;
+
   // Deep equality operators. Checks that the positions, combinators, and other
   // stored state match.
   bool operator==(const Enumerator& other) const;

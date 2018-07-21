@@ -1,6 +1,7 @@
 #include "board.h"
 #include "catch.hpp"
 
+#include "seven-tuple.h"
 #include "six-tuple.h"
 
 TEST_CASE("Get and Set", "[Board]") {
@@ -150,4 +151,92 @@ TEST_CASE("WhichDatabaseSlice", "[Board]") {
     " -   -   -   w   "
     "   -   B   -   - "
     " -   W   -   -   ").WhichDatabaseSlice() == SixTuple(3, 4, 1, 2, 6, 5));
+}
+
+TEST_CASE("Index of Board", "[Board]") {
+  SevenTuple s = Board("   -   -   -   - "
+                       " -   -   -   -   "
+                       "   -   -   -   - "
+                       " w   -   -   -   "
+                       "   -   -   -   - "
+                       " -   -   -   b   "
+                       "   -   -   -   - "
+                       " -   -   -   -   ").Index();
+  REQUIRE(s.GetDB() == SixTuple(0, 0, 1, 1, 2, 3));
+  REQUIRE(s.GetIndex() == 0);
+  // Two non-overlapping pawns.
+  REQUIRE(Board("   -   -   -   - "
+                " -   -   -   -   "
+                "   -   -   -   - "
+                " -   w   -   -   "
+                "   -   -   -   - "
+                " -   -   -   b   "
+                "   -   -   -   - "
+                " -   -   -   -   ").Index().GetIndex() == 1);
+  REQUIRE(Board("   -   -   -   - "
+                " -   -   -   -   "
+                "   -   -   -   - "
+                " -   -   -   w   "
+                "   -   -   -   - "
+                " b   -   -   -   "
+                "   -   -   -   - "
+                " -   -   -   -   ").Index().GetIndex() == 15);
+  // Two overlapping pawns.
+  REQUIRE(Board("   -   -   -   - "
+                " -   -   -   -   "
+                "   -   -   -   - "
+                " w   -   -   b   "
+                "   -   -   -   - "
+                " -   -   -   -   "
+                "   -   -   -   - "
+                " -   -   -   -   ").Index().GetIndex() == 0);
+  REQUIRE(Board("   -   -   -   - "
+                " -   -   -   -   "
+                "   -   -   -   - "
+                " -   w   -   b   "
+                "   -   -   -   - "
+                " -   -   -   -   "
+                "   -   -   -   - "
+                " -   -   -   -   ").Index().GetIndex() == 1);
+  REQUIRE(Board("   -   -   -   - "
+                " -   -   -   -   "
+                "   -   -   -   - "
+                " b   -   -   w   "
+                "   -   -   -   - "
+                " -   -   -   -   "
+                "   -   -   -   - "
+                " -   -   -   -   ").Index().GetIndex() == 11);
+  // All four piece types.
+  REQUIRE(Board("   -   -   -   - "
+                " -   -   -   -   "
+                "   w   -   -   - "
+                " -   -   -   -   "
+                "   -   -   -   - "
+                " -   -   -   b   "
+                "   -   -   -   - "
+                " B   W   -   -   ").Index().GetIndex() == 0);
+  REQUIRE(Board("   -   -   -   - "
+                " -   -   -   -   "
+                "   w   -   -   - "
+                " -   -   -   -   "
+                "   -   -   -   - "
+                " -   -   -   b   "
+                "   -   -   -   - "
+                " B   -   W   -   ").Index().GetIndex() == 1);
+  REQUIRE(Board("   -   W   -   B "
+                " -   -   -   -   "
+                "   -   -   -   w "
+                " -   -   -   -   "
+                "   -   -   -   - "
+                " b   -   -   -   "
+                "   -   -   -   - "
+                " -   -   -   -   ").Index().GetIndex() == 13918);
+  REQUIRE(Board("   -   -   W   B "
+                " -   -   -   -   "
+                "   -   -   -   w "
+                " -   -   -   -   "
+                "   -   -   -   - "
+                " b   -   -   -   "
+                "   -   -   -   - "
+                " -   -   -   -   ").Index().GetIndex() == 13919);
 }

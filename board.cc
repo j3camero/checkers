@@ -1,5 +1,8 @@
 #include "board.h"
 
+#include "combinator.h"
+#include "pawn-cache.h"
+#include "seven-tuple.h"
 #include "six-tuple.h"
 
 // The way the spaces on the checkerboard are ordered on a printed page.
@@ -97,11 +100,91 @@ SixTuple Board::WhichDatabaseSlice() const {
   return db;
 }
 
-uint64 Board::Index(const SixTuple& db) {
-  return 0;
+uint64 Board::Index(const SixTuple& db) const {
+  // Calculate black pawn sub-index.
+  uint64 bp_index = 0;
+  int avail = 4 * db.rbp + 3;
+  uint64 c = 0;
+  for (int i = avail; i >= 0; --i) {
+    if (pieces[i] == BlackPawn) {
+      --avail;
+      bp_index *= avail;
+      bp_index += c;
+      c = 0;
+    } else {
+      c++;
+    }
+  }
+  // Calculate white pawn sub-index.
+  uint64 wp_index = 0;
+  avail = 4 * (db.rwp + 1);
+  c = 0;
+  for (int i = 4 * (7 - db.rwp); i < 32; ++i) {
+    switch (pieces[i]) {
+      case BlackPawn:
+        break;
+      case WhitePawn:
+        --avail;
+        wp_index *= avail;
+        wp_index += c;
+        c = 0;
+        break;
+      default:
+        c++;
+        break;
+    };
+  }
+  // Calculate black king sub-index.
+  uint64 bk_index = 0;
+  avail = 32 - db.nbp - db.nwp;
+  c = 0;
+  for (int i = 0; i < 32; ++i) {
+    switch (pieces[i]) {
+      case BlackPawn:
+      case WhitePawn:
+        break;
+      case BlackKing:
+        --avail;
+        bk_index *= avail;
+        bk_index += c;
+        c = 0;
+        break;
+      default:
+        c++;
+        break;
+    };
+  }
+  // Calculate white king sub-index.
+  uint64 wk_index = 0;
+  c = 0;
+  for (int i = 0; i < 32; ++i) {
+    switch (pieces[i]) {
+      case WhiteKing:
+        --avail;
+        wk_index *= avail;
+        wk_index += c;
+        c = 0;
+        break;
+      case Empty:
+        c++;
+        break;
+      default:
+        break;
+    };
+  }
+  // Calculate a combined overall index from the separate sub-indices.
+  const PawnCache& pc = PawnCache::Get(db);
+  uint64 index = pc.SumWP(bp_index) + wp_index;
+  const int bk_avail = 32 - db.nbp - db.nwp;
+  index *= Choose(bk_avail, db.nbk);
+  index += bk_index;
+  const int wk_avail = bk_avail - db.nbk;
+  index *= Choose(wk_avail, db.nwk);
+  index += wk_index;
+  return index;
 }
 
-SevenTuple Board::Index() {
+SevenTuple Board::Index() const {
   SixTuple db = WhichDatabaseSlice();
   uint64 index = Index(db);
   return SevenTuple(db, index);
