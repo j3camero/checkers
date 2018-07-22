@@ -1,5 +1,5 @@
-#ifndef _DATABASE_ID_H_
-#define _DATABASE_ID_H_
+#ifndef _SIX_TUPLE_H_
+#define _SIX_TUPLE_H_
 
 #include <fstream>
 

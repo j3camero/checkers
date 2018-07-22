@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include "seven-tuple.h"
 #include "six-tuple.h"
 
 enum Piece {
@@ -22,6 +23,11 @@ class Board {
   // Initialize a board from a human-readable string.
   Board(const std::string& s);
 
+  // Initialialize a board by index. Calls Deindex().
+  Board(const SevenTuple& index);
+  Board(const SixTuple& db, uint64 index);
+  Board(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp, uint64 index);
+
   Piece GetPiece(int index) const;
   void SetPiece(int index, Piece p);
 
@@ -37,6 +43,19 @@ class Board {
 
   // Determine which database slice this board position belongs to.
   SixTuple WhichDatabaseSlice() const;
+
+  // Determine the index of this board position. The result is not defined if
+  // the provided db does not match WhichDatabaseSlice(). Use this function
+  // only if the caller is sure they know the correct SixTuple to use. If not,
+  // use the overload of Index() that takes no arguments instead.
+  uint64 Index(const SixTuple& db) const;
+
+  // Determine the index of this board position, including which database slice.
+  // Returns a SevenTuple containing which DB slice and which index.
+  SevenTuple Index() const;
+
+  // Deindex a position by its index and which database slice it's part of.
+  void Deindex(const SixTuple& db, uint64 index);
 
   // Equality operator.
   bool operator==(const Board& other) const;
