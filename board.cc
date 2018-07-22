@@ -41,6 +41,20 @@ Board::Board(const std::string& s) {
   }
 }
 
+Board::Board(const SevenTuple& index) {
+  Deindex(index.GetDB(), index.GetIndex());
+}
+
+Board::Board(const SixTuple& db, uint64 index) {
+  Deindex(db, index);
+}
+
+Board::Board(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp,
+             uint64 index) {
+  SixTuple db(nbk, nwk, nbp, nwp, rbp, rwp);
+  Deindex(db, index);
+}
+
 Piece Board::GetPiece(int index) const {
   return pieces[index];
 }
@@ -103,76 +117,76 @@ SixTuple Board::WhichDatabaseSlice() const {
 uint64 Board::Index(const SixTuple& db) const {
   // Calculate black pawn sub-index.
   uint64 bp_index = 0;
-  int avail = 4 * db.rbp + 3;
-  uint64 c = 0;
-  for (int i = avail; i >= 0; --i) {
-    if (pieces[i] == BlackPawn) {
-      --avail;
-      bp_index *= avail;
-      bp_index += c;
-      c = 0;
+  int k = db.nbp - 1;
+  for (int n = 4 * db.rbp + 3; n >= 0 && k >= 0; --n) {
+    if (pieces[n] == BlackPawn) {
+      --k;
     } else {
-      c++;
+      bp_index += Choose(n, k);
     }
   }
   // Calculate white pawn sub-index.
-  uint64 wp_index = 0;
-  avail = 4 * (db.rwp + 1);
-  c = 0;
+  int n = 4 * db.rwp + 3;
   for (int i = 4 * (7 - db.rwp); i < 32; ++i) {
+    if (pieces[i] == BlackPawn) {
+      --n;
+    }
+  }
+  uint64 wp_index = 0;
+  k = db.nwp - 1;
+  for (int i = 4 * (7 - db.rwp); i < 32 && k >= 0; ++i) {
     switch (pieces[i]) {
       case BlackPawn:
         break;
       case WhitePawn:
-        --avail;
-        wp_index *= avail;
-        wp_index += c;
-        c = 0;
+        --k;
+        --n;
         break;
       default:
-        c++;
+        wp_index += Choose(n, k);
+        --n;
         break;
     };
   }
   // Calculate black king sub-index.
   uint64 bk_index = 0;
-  avail = 32 - db.nbp - db.nwp;
-  c = 0;
-  for (int i = 0; i < 32; ++i) {
+  n = 32 - db.nbp - db.nwp - 1;
+  k = db.nbk - 1;
+  for (int i = 0; i < 32 && k >= 0; ++i) {
     switch (pieces[i]) {
       case BlackPawn:
       case WhitePawn:
         break;
       case BlackKing:
-        --avail;
-        bk_index *= avail;
-        bk_index += c;
-        c = 0;
+        --k;
+        --n;
         break;
-      default:
-        c++;
+      case WhiteKing:
+      case Empty:
+        bk_index += Choose(n, k);
+        --n;
         break;
     };
   }
   // Calculate white king sub-index.
   uint64 wk_index = 0;
-  c = 0;
-  for (int i = 0; i < 32; ++i) {
+  n = 32 - db.nbp - db.nwp - db.nbk - 1;
+  k = db.nwk - 1;
+  for (int i = 0; i < 32 && k >= 0; ++i) {
     switch (pieces[i]) {
       case WhiteKing:
-        --avail;
-        wk_index *= avail;
-        wk_index += c;
-        c = 0;
+        --k;
+        --n;
         break;
       case Empty:
-        c++;
+        wk_index += Choose(n, k);
+        --n;
         break;
       default:
         break;
     };
   }
-  // Calculate a combined overall index from the separate sub-indices.
+  // Combine the four separate sub-indices into one overall index.
   const PawnCache& pc = PawnCache::Get(db);
   uint64 index = pc.SumWP(bp_index) + wp_index;
   const int bk_avail = 32 - db.nbp - db.nwp;
@@ -188,6 +202,63 @@ SevenTuple Board::Index() const {
   SixTuple db = WhichDatabaseSlice();
   uint64 index = Index(db);
   return SevenTuple(db, index);
+}
+
+void Board::Deindex(const SixTuple& db, uint64 index) {
+  Clear();
+  // Use division & modulus to find the indices for the kings.
+  const int bk_avail = 32 - db.nbp - db.nwp;
+  const int wk_avail = bk_avail - db.nbk;
+  const uint64 bk_combinations = Choose(bk_avail, db.nbk);
+  const uint64 wk_combinations = Choose(wk_avail, db.nwk);
+  const uint64 wkr = index / wk_combinations;
+  const uint64 bkr = wkr / bk_combinations;
+  const uint64 wk_index = index - wk_combinations * wkr;
+  const uint64 bk_index = wkr - bk_combinations * bkr;
+  // Use the pawn cache to determine the pawn indices, to avoid redundant work.
+  const PawnCache& pc = PawnCache::Get(db);
+  if (bkr >= pc.MaxWP()) {
+    throw "The index is out of range and cannot be deindexed.";
+  }
+  uint64 bp_index;
+  uint64 wp_index;
+  pc.DecomposeIndex(bkr, &bp_index, &wp_index);
+  // Place black pawns.
+  const int bp_avail = 4 * (db.rbp + 1);
+  std::vector<int> sq;
+  for (int i = bp_avail - 1; i >= 0; --i) {
+    sq.push_back(i);
+  }
+  Combinator bp(bp_avail, db.nbp);
+  bp.Deindex(bp_index, BlackPawn, &sq, this);
+  // Place white pawns.
+  sq.clear();
+  for (int i = 4 * (7 - db.rwp); i < 32; ++i) {
+    if (pieces[i] == Empty) {
+      sq.push_back(i);
+    }
+  }
+  const int wp_avail = sq.size();
+  Combinator wp(wp_avail, db.nwp);
+  wp.Deindex(wp_index, WhitePawn, &sq, this);
+  // Place black kings.
+  sq.clear();
+  for (int i = 0; i < 32; ++i) {
+    if (pieces[i] == Empty) {
+      sq.push_back(i);
+    }
+  }
+  Combinator bk(bk_avail, db.nbk);
+  bk.Deindex(bk_index, BlackKing, &sq, this);
+  // Place white kings.
+  sq.clear();
+  for (int i = 0; i < 32; ++i) {
+    if (pieces[i] == Empty) {
+      sq.push_back(i);
+    }
+  }
+  Combinator wk(wk_avail, db.nwk);
+  wk.Deindex(wk_index, WhiteKing, &sq, this);
 }
 
 bool Board::operator==(const Board& other) const {
