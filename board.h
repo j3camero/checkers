@@ -20,6 +20,9 @@ class Board {
   // Initialize an empty board.
   Board();
 
+  // Copy constructor.
+  Board(const Board& b);
+
   // Initialize a board from a human-readable string.
   Board(const std::string& s);
 
@@ -55,7 +58,21 @@ class Board {
   SevenTuple Index() const;
 
   // Deindex a position by its index and which database slice it's part of.
+  // Replaces the current board state in-place.
   void Deindex(const SixTuple& db, uint64 index);
+
+  // Returns the mirror of this board.
+  //   - Black and white colors are reversed.
+  //   - The board is rotated 180 degrees around.
+  Board Mirror() const;
+
+  // Returns the mirror of a piece type.
+  static Piece MirrorPiece(Piece p);
+
+  // Does the same thing as .Mirror().Index() but more efficiently by not
+  // copying the board.
+  uint64 MirrorIndex(const SixTuple& db) const;
+  SevenTuple MirrorIndex() const;
 
   // Equality operator.
   bool operator==(const Board& other) const;
