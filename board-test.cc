@@ -710,3 +710,91 @@ TEST_CASE("Index and Deindex are consistent, 28M+", "[Board]") {
     REQUIRE(Board(db, index).Index() == SevenTuple(db, index));
   }
 }
+
+TEST_CASE("Mirror of board position.", "[Board]") {
+  REQUIRE(
+    Board("   B   -   -   - "
+          " -   -   w   b   "
+          "   W   -   w   - "
+          " -   -   b   w   "
+          "   -   -   -   - "
+          " -   b   B   -   "
+          "   -   -   -   B "
+          " b   -   -   -   ").Mirror() ==
+    Board("   -   -   -   w "
+          " W   -   -   -   "
+          "   -   W   w   - "
+          " -   -   -   -   "
+          "   b   w   -   - "
+          " -   b   -   B   "
+          "   w   b   -   - "
+          " -   -   -   W   ")
+  );
+}
+
+TEST_CASE("MirrorIndex hand calculated examples.", "[Board]") {
+  REQUIRE(Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " w   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   b   "
+    "   -   -   -   - "
+    " -   -   -   -   ").MirrorIndex().GetIndex() == 0);
+  REQUIRE(Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " w   -   -   -   "
+    "   -   -   -   - "
+    " -   -   b   -   "
+    "   -   -   -   - "
+    " -   -   -   -   ").MirrorIndex().GetIndex() == 1);
+  REQUIRE(Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   w   "
+    "   -   -   -   - "
+    " b   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   ").MirrorIndex().GetIndex() == 15);
+  REQUIRE(Board(
+    "   -   -   B   W "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " w   -   -   b   "
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   ").MirrorIndex().GetIndex() == 0);
+  REQUIRE(Board(
+    "   -   B   -   W "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " w   -   -   b   "
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   ").MirrorIndex().GetIndex() == 1);
+  REQUIRE(Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " b   -   -   w   "
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " W   B   -   -   ").MirrorIndex().GetIndex() == 10439);
+}
+
+TEST_CASE("MirrorIndex is self consistent, 28M+", "[Board]") {
+  // Choose some indices from a database slice that has over 28M positions.
+  // Check that .MirrorIndex() matches the .Mirror().Index().
+  SixTuple db(3, 2, 1, 2, 0, 0);
+  for (uint64 index = 11; index < 28 * 1000 * 1000; index += 1000007) {
+    Board b(db, index);
+    REQUIRE(b.MirrorIndex() == b.Mirror().Index());
+  }
+}

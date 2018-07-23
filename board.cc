@@ -23,6 +23,12 @@ Board::Board() {
   Clear();
 }
 
+Board::Board(const Board& b) {
+  for (int i = 0; i < 32; ++i) {
+    pieces[i] = b.pieces[i];
+  }
+}
+
 Board::Board(const std::string& s) {
   int pieces_found = 0;
   for (int i = 0; i < s.length(); ++i) {
@@ -259,6 +265,121 @@ void Board::Deindex(const SixTuple& db, uint64 index) {
   }
   Combinator wk(wk_avail, db.nwk);
   wk.Deindex(wk_index, WhiteKing, &sq, this);
+}
+
+Board Board::Mirror() const {
+  Board b;
+  for (int i = 0; i < 32; ++i) {
+    b.pieces[i] = MirrorPiece(pieces[31 - i]);
+  }
+  return b;
+}
+
+Piece Board::MirrorPiece(Piece p) {
+  switch (p) {
+    case BlackPawn:
+      return WhitePawn;
+    case WhitePawn:
+      return BlackPawn;
+    case BlackKing:
+      return WhiteKing;
+    case WhiteKing:
+      return BlackKing;
+    case Empty:
+      return Empty;
+  };
+}
+
+uint64 Board::MirrorIndex(const SixTuple& db) const {
+  // Note that db is ID of the mirror database. So there is a bit of color
+  // switcheroo happening here to avoid making a copy of the board.
+  // Calculate black pawn sub-index.
+  uint64 bp_index = 0;
+  int k = db.nbp - 1;
+  for (int n = 4 * db.rbp + 3; n >= 0 && k >= 0; --n) {
+    if (pieces[31 - n] == WhitePawn) {
+      --k;
+    } else {
+      bp_index += Choose(n, k);
+    }
+  }
+  // Calculate white pawn sub-index.
+  int n = 4 * db.rwp + 3;
+  for (int i = 4 * (7 - db.rwp); i < 32; ++i) {
+    if (pieces[31 - i] == WhitePawn) {
+      --n;
+    }
+  }
+  uint64 wp_index = 0;
+  k = db.nwp - 1;
+  for (int i = 4 * (7 - db.rwp); i < 32 && k >= 0; ++i) {
+    switch (pieces[31 - i]) {
+      case WhitePawn:
+        break;
+      case BlackPawn:
+        --k;
+        --n;
+        break;
+      default:
+        wp_index += Choose(n, k);
+        --n;
+        break;
+    };
+  }
+  // Calculate black king sub-index.
+  uint64 bk_index = 0;
+  n = 32 - db.nbp - db.nwp - 1;
+  k = db.nbk - 1;
+  for (int i = 0; i < 32 && k >= 0; ++i) {
+    switch (pieces[31 - i]) {
+      case BlackPawn:
+      case WhitePawn:
+        break;
+      case WhiteKing:
+        --k;
+        --n;
+        break;
+      case BlackKing:
+      case Empty:
+        bk_index += Choose(n, k);
+        --n;
+        break;
+    };
+  }
+  // Calculate white king sub-index.
+  uint64 wk_index = 0;
+  n = 32 - db.nbp - db.nwp - db.nbk - 1;
+  k = db.nwk - 1;
+  for (int i = 0; i < 32 && k >= 0; ++i) {
+    switch (pieces[31 - i]) {
+      case BlackKing:
+        --k;
+        --n;
+        break;
+      case Empty:
+        wk_index += Choose(n, k);
+        --n;
+        break;
+      default:
+        break;
+    };
+  }
+  // Combine the four separate sub-indices into one overall index.
+  const PawnCache& pc = PawnCache::Get(db);
+  uint64 index = pc.SumWP(bp_index) + wp_index;
+  const int bk_avail = 32 - db.nbp - db.nwp;
+  index *= Choose(bk_avail, db.nbk);
+  index += bk_index;
+  const int wk_avail = bk_avail - db.nbk;
+  index *= Choose(wk_avail, db.nwk);
+  index += wk_index;
+  return index;
+}
+
+SevenTuple Board::MirrorIndex() const {
+  SixTuple db = WhichDatabaseSlice().Mirror();
+  uint64 index = MirrorIndex(db);
+  return SevenTuple(db, index);
 }
 
 bool Board::operator==(const Board& other) const {
