@@ -16,6 +16,9 @@ class FourTuple {
   // Copy constructor.
   FourTuple(const FourTuple& p);
 
+  // Default constructor. Yields (0,0,0,0) which is not a real database.
+  FourTuple();
+
   // Reverses the colors.
   FourTuple Mirror();
 

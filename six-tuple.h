@@ -17,14 +17,25 @@
 // It doesn't store the endgame data itself, just names the database slice.
 class SixTuple : public FourTuple {
  public:
-  // Constructor.
+  // Normal constructor.
   SixTuple(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp);
 
   // Copy constructor.
   SixTuple(const SixTuple& d);
 
+  // Default constructor. Yields 0000.00, which is not a real database slice.
+  SixTuple();
+
   // Reverses the colors.
   SixTuple Mirror();
+
+  // Parses a SixTuple in the format "XXXX.XX" in-place. Returns true on
+  // success, false on error.
+  bool Parse(const std::string& s);
+
+  // Parses a SixTuple in the format "XXXX.XX". Throws an exception in case
+  // of error.
+  static SixTuple ParseOrDie(const std::string& s);
 
   // Operators.
   bool operator==(const SixTuple& other) const;

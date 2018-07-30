@@ -7,11 +7,14 @@ FourTuple::FourTuple(int nbk, int nwk, int nbp, int nwp)
   // Body is empty because of initializer lists.
 }
 
-FourTuple::FourTuple(const FourTuple& p) {
-  nbk = p.nbk;
-  nwk = p.nwk;
-  nbp = p.nbp;
-  nwp = p.nwp;
+FourTuple::FourTuple(const FourTuple& p)
+  : nbk(p.nbk), nwk(p.nwk), nbp(p.nbp), nwp(p.nwp) {
+  // Body is empty because of initializer lists.
+}
+
+FourTuple::FourTuple()
+  : nbk(0), nwk(0), nbp(0), nwp(0) {
+  // Body is empty because of initializer lists.
 }
 
 FourTuple FourTuple::Mirror() {

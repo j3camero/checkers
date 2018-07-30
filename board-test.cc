@@ -791,9 +791,9 @@ TEST_CASE("MirrorIndex hand calculated examples.", "[Board]") {
 
 TEST_CASE("MirrorIndex is self consistent, 28M+", "[Board]") {
   // Choose some indices from a database slice that has over 28M positions.
-  // Check that .MirrorIndex() matches the .Mirror().Index().
+  // Check that .MirrorIndex() matches .Mirror().Index().
   SixTuple db(3, 2, 1, 2, 0, 0);
-  for (uint64 index = 11; index < 28 * 1000 * 1000; index += 1000007) {
+  for (uint64 index = 13; index < 28 * 1000 * 1000; index += 1000007) {
     Board b(db, index);
     REQUIRE(b.MirrorIndex() == b.Mirror().Index());
   }
