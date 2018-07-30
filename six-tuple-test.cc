@@ -44,3 +44,14 @@ TEST_CASE("SixTuple equality operator", "[SixTuple]") {
   REQUIRE(SixTuple(2, 4, 3, 1, 4, 3) != SixTuple(2, 4, 3, 1, 5, 3));
   REQUIRE(SixTuple(2, 4, 3, 1, 4, 3) != SixTuple(2, 4, 3, 1, 4, 2));
 }
+
+TEST_CASE("SixTuple Parse", "[SixTuple]") {
+  SixTuple s;
+  s.Parse("1234.56");
+  REQUIRE(s.nbk == 1);
+  REQUIRE(s.nwk == 2);
+  REQUIRE(s.nbp == 3);
+  REQUIRE(s.nwp == 4);
+  REQUIRE(s.rbp == 5);
+  REQUIRE(s.rwp == 6);
+}
