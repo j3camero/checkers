@@ -7,7 +7,19 @@
 #include "enumerator.h"
 
 int main(int argc, char **argv) {
-  Enumerator e(3, 2, 1, 2, 6, 6);
+  std::cout << "argc: " << argc << std::endl;
+  for (int i = 0; i < argc; ++i) {
+    std::cout << "argv[" << i << "]: " << argv[i] << std::endl;
+  }
+  if (argc != 2) {
+    std::cout << "USAGE: time ./enumerator-benchmark 3212.66" << std::endl
+              << "Any database slice of the form ABCD.EF can be specified. "
+              << "For more information, see Lake (1994)." << std::endl;
+    return 1;
+  }
+  std::string db_string(argv[1]);
+  SixTuple db = SixTuple::ParseOrDie(db_string);
+  Enumerator e(db);
   const uint64 n = e.NumPositions();
   std::cout << "Starting with position 0:" << std::endl << e << std::endl
             << "Enumerating " << n << " positions..." << std::endl;
