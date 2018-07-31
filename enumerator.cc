@@ -49,21 +49,27 @@ uint64 Enumerator::NumPositions() const {
 
 bool Enumerator::Increment() {
   ++index;
-  if (!wk.Increment(&wk_squares, &board)) {
-    return false;
+  if (db.nwk > 0) {
+    if (!wk.Increment(&wk_squares, &board)) {
+      return false;
+    }
+    board.Clear(WhiteKing);
   }
-  board.Clear(WhiteKing);
-  if (!bk.Increment(&bk_squares, &board)) {
-    SetupWhiteKings();
-    return false;
+  if (db.nbk > 0) {
+    if (!bk.Increment(&bk_squares, &board)) {
+      SetupWhiteKings();
+      return false;
+    }
+    board.Clear(BlackKing);
   }
-  board.Clear(BlackKing);
-  if (!wp->Increment(&wp_squares, &board) && wp->Index() < pc.NumWP(bp.Index())) {
-    SetupBlackKings();
-    SetupWhiteKings();
-    return false;
+  if (db.nwp > 0) {
+    if (!wp->Increment(&wp_squares, &board) && wp->Index() < pc.NumWP(bp.Index())) {
+      SetupBlackKings();
+      SetupWhiteKings();
+      return false;
+    }
+    board.Clear(WhitePawn);
   }
-  board.Clear(WhitePawn);
   if (!bp.Increment(&bp_squares, &board)) {
     // The if statements are separated this way so that it's clear the
     // Increment() happens before the Index().
@@ -194,6 +200,9 @@ std::ostream& operator<<(std::ostream &out, const Enumerator& e) {
 }
 
 void Enumerator::SetupBlackPawns() {
+  if (db.nbp == 0) {
+    return;
+  }
   bp.Reset();
   bp_squares.clear();
   // List the square numbers available to black pawns. They are in reverse
@@ -212,6 +221,9 @@ void Enumerator::SetupBlackPawns() {
 }
 
 void Enumerator::SetupWhitePawns() {
+  if (wp && db.nwp == 0) {
+    return;
+  }
   if (wp) {
     delete wp;
   }
@@ -228,6 +240,9 @@ void Enumerator::SetupWhitePawns() {
 }
 
 void Enumerator::SetupBlackKings() {
+  if (db.nbk == 0) {
+    return;
+  }
   bk.Reset();
   bk_squares.clear();
   for (int i = 0; i < 32; ++i) {
@@ -241,6 +256,9 @@ void Enumerator::SetupBlackKings() {
 }
 
 void Enumerator::SetupWhiteKings() {
+  if (db.nwk == 0) {
+    return;
+  }
   wk.Reset();
   wk_squares.clear();
   for (int i = 0; i < 32; ++i) {
