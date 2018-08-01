@@ -44,7 +44,7 @@ uint64 Factorial(unsigned int n) {
 uint64 Choose(unsigned int n, unsigned int k) {
   if (n < choose_cache.size()) {
     if (k > n) {
-      throw "n must be larger than k.";
+      return 0;
     }
     return choose_cache[n][k];
   }

@@ -20,7 +20,7 @@ Enumerator::Enumerator(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp)
     pc(PawnCache::Get(SixTuple(nbk, nwk, nbp, nwp, rbp, rwp))),
     num_positions(pc.MaxWP() * bk.NumCombinations() * wk.NumCombinations()) {
   // The body of the function starts here.
-  Reset();
+  Deindex(0);
 }
 
 Enumerator::Enumerator(SixTuple db)
@@ -34,7 +34,7 @@ Enumerator::Enumerator(SixTuple db)
     pc(PawnCache::Get(db)),
     num_positions(pc.MaxWP() * bk.NumCombinations() * wk.NumCombinations()) {
   // The body of the function starts here.
-  Reset();
+  Deindex(0);
 }
 
 Enumerator::~Enumerator() {
@@ -63,24 +63,25 @@ bool Enumerator::Increment() {
     board.Clear(BlackKing);
   }
   if (db.nwp > 0) {
-    if (!wp->Increment(&wp_squares, &board) && wp->Index() < pc.NumWP(bp.Index())) {
-      SetupBlackKings();
-      SetupWhiteKings();
-      return false;
+    if (!wp->Increment(&wp_squares, &board)) {
+      if (wp->Index() < pc.NumWP(bp.Index())) {
+        SetupBlackKings();
+        SetupWhiteKings();
+        return false;
+      }
     }
     board.Clear(WhitePawn);
   }
-  if (!bp.Increment(&bp_squares, &board)) {
-    // The if statements are separated this way so that it's clear the
-    // Increment() happens before the Index().
-    if (bp.Index() < pc.MaxBP()) {
-      SetupWhitePawns();
-      SetupBlackKings();
-      SetupWhiteKings();
-      return false;
+  while (!bp.Increment(&bp_squares, &board) && bp.Index() < pc.MaxBP()) {
+    if (pc.NumWP(bp.Index()) == 0) {
+      continue;
     }
+    SetupWhitePawns();
+    SetupBlackKings();
+    SetupWhiteKings();
+    return false;
   }
-  Reset();
+  Deindex(0);
   return true;
 }
 
@@ -91,15 +92,6 @@ bool Enumerator::Increment(uint64 count) {
     --count;
   }
   return any_true;
-}
-
-void Enumerator::Reset() {
-  board.Clear();
-  SetupBlackPawns();
-  SetupWhitePawns();
-  SetupBlackKings();
-  SetupWhiteKings();
-  index = 0;
 }
 
 uint64 Enumerator::Index() const {
@@ -124,6 +116,10 @@ void Enumerator::Deindex(uint64 new_index) {
   uint64 wp_index;
   pc.DecomposeIndex(bkr, &bp_index, &wp_index);
   // Black pawns.
+  bp_squares.clear();
+  for (int i = 4 * db.rbp + 3; i >= 0; --i) {
+    bp_squares.push_back(i);
+  }
   bp.Deindex(bp_index, BlackPawn, &bp_squares, &board);
   // White pawns.
   if (wp) {
@@ -197,27 +193,6 @@ std::ostream& operator<<(std::ostream &out, const Enumerator& e) {
       << "bp: " << e.bp << std::endl << "wp: " << (*e.wp) << std::endl
       << "bk: " << e.bk << std::endl << "wk: " << e.wk << std::endl << e.board;
   return out;
-}
-
-void Enumerator::SetupBlackPawns() {
-  if (db.nbp == 0) {
-    return;
-  }
-  bp.Reset();
-  bp_squares.clear();
-  // List the square numbers available to black pawns. They are in reverse
-  // order to make the iteration indexes contiguous. All other pieces types
-  // are in forward order regardless of color. This is one detail of
-  // Lake & Shaeffer's 1994 paper that I couldn't sort out so I came up with
-  // this system instead. It will result in all the same endgame database
-  // "slices" with the same numbers of positions each - potentially ordered
-  // differently. The end result will be the same.
-  for (int i = 4 * db.rbp + 3; i >= 0; --i) {
-    bp_squares.push_back(i);
-  }
-  for (int i = 0; i < db.nbp; ++i) {
-    board.SetPiece(bp_squares[i], BlackPawn);
-  }
 }
 
 void Enumerator::SetupWhitePawns() {

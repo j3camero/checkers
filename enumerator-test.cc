@@ -290,3 +290,56 @@ TEST_CASE("Deindex compare to increment, 28M+ loop", "[Enumerator]") {
     b.Increment(step);
   }
 }
+
+TEST_CASE("4 black pawns blocking leading white pawn rank", "[Enumerator]") {
+  Enumerator e(0, 0, 4, 1, 1, 6);
+  REQUIRE(e == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   w   b   b   b "
+                     " -   -   -   b   "));
+  e.Increment();
+  REQUIRE(e == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   w   b   b   b "
+                     " -   -   b   -   "));
+}
+
+TEST_CASE("5 black pawns blocking leading white pawn rank", "[Enumerator]") {
+  Enumerator e(0, 0, 5, 1, 2, 6);
+  REQUIRE(e == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " b   b   b   b   "
+                     "   w   -   -   b "
+                     " -   -   -   -   "));
+  e.Increment(699);
+  REQUIRE(e == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " b   -   -   b   "
+                     "   -   -   -   w "
+                     " b   b   b   -   "));
+  REQUIRE(e.GetBoard().Index().GetIndex() == e.Index());
+  e.Increment();
+  REQUIRE(e == Board("   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   -   "
+                     "   -   -   -   - "
+                     " -   -   -   b   "
+                     "   w   b   b   b "
+                     " -   -   -   b   "));
+  REQUIRE(e.GetBoard().Index().GetIndex() == e.Index());
+}

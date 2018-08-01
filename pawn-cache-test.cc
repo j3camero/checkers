@@ -51,3 +51,24 @@ TEST_CASE("Check for true re-use of pawn cache records", "[PawnCache]") {
   REQUIRE(&a != &b);
   REQUIRE(&a == &c);
 }
+
+TEST_CASE("Four black pawns blocking the leading white rank.", "[PawnCache]") {
+  const PawnCache& pc = PawnCache::Get(SixTuple(0, 0, 4, 1, 1, 6));
+  REQUIRE(pc.MaxBP() == 69);
+  REQUIRE(pc.NumWP(0) == 0);
+  REQUIRE(pc.NumWP(1) == 1);
+  REQUIRE(pc.NumWP(68) == 3);
+}
+
+TEST_CASE("Five black pawns blocking the leading white rank.", "[PawnCache]") {
+  const PawnCache& pc = PawnCache::Get(SixTuple(0, 0, 5, 1, 1, 6));
+  REQUIRE(pc.MaxBP() == 56);
+  REQUIRE(pc.NumWP(0) == 0);
+  REQUIRE(pc.NumWP(1) == 0);
+  REQUIRE(pc.NumWP(2) == 0);
+  REQUIRE(pc.NumWP(3) == 0);
+  REQUIRE(pc.NumWP(4) == 1);
+  REQUIRE(pc.SumWP(4) == 0);
+  REQUIRE(pc.SumWP(5) == 1);
+  REQUIRE(pc.NumWP(55) == 3);
+}

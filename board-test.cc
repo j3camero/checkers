@@ -403,6 +403,62 @@ TEST_CASE("Index of Board", "[Board]") {
     " -   -   -   -   "
     "   -   -   -   - "
     " b   b   -   -   ").Index().GetIndex() == 36 * 122850 - 1);
+  // Four black pawns blocking the leading white pawn rank.
+  REQUIRE(Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " w   b   b   b   "
+    "   -   -   -   b "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   ").Index().GetIndex() == 0);
+  REQUIRE(Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " w   b   b   b   "
+    "   -   -   b   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   ").Index().GetIndex() == 1);
+  REQUIRE(Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " w   b   b   b   "
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " b   -   -   -   ").Index().GetIndex() == 15);
+  REQUIRE(Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " b   w   b   b   "
+    "   -   -   -   b "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   ").Index().GetIndex() == 16);
+  // Five black pawns blocking the leading white pawn rank.
+  REQUIRE(Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " w   b   b   b   "
+    "   -   -   b   b "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   ").Index().GetIndex() == 0);
+  REQUIRE(Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " w   b   b   b   "
+    "   -   b   -   b "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   ").Index().GetIndex() == 1);
 }
 
 TEST_CASE("Deindex Board, hand-calculated examples", "[Board]") {
@@ -690,6 +746,68 @@ TEST_CASE("Deindex Board, hand-calculated examples", "[Board]") {
     " -   -   -   -   "
     "   -   -   -   - "
     " b   b   -   -   "
+  ));
+  // Four black pawns blocking the leading white pawn rank.
+  REQUIRE(Board(0, 0, 4, 1, 4, 3, 0) == Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " w   b   b   b   "
+    "   -   -   -   b "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   "
+  ));
+  REQUIRE(Board(0, 0, 4, 1, 4, 3, 1) == Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " w   b   b   b   "
+    "   -   -   b   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   "
+  ));
+  REQUIRE(Board(0, 0, 4, 1, 4, 3, 15) == Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " w   b   b   b   "
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " b   -   -   -   "
+  ));
+  REQUIRE(Board(0, 0, 4, 1, 4, 3, 16) == Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " b   w   b   b   "
+    "   -   -   -   b "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   "
+  ));
+  // Five black pawns blocking the leading white pawn rank.
+  REQUIRE(Board(0, 0, 5, 1, 4, 3, 0) == Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " w   b   b   b   "
+    "   -   -   b   b "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   "
+  ));
+  REQUIRE(Board(0, 0, 5, 1, 4, 3, 1) == Board(
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " w   b   b   b   "
+    "   -   b   -   b "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   "
   ));
 }
 
