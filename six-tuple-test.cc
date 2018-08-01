@@ -47,11 +47,15 @@ TEST_CASE("SixTuple equality operator", "[SixTuple]") {
 
 TEST_CASE("SixTuple Parse", "[SixTuple]") {
   SixTuple s;
-  s.Parse("1234.56");
-  REQUIRE(s.nbk == 1);
-  REQUIRE(s.nwk == 2);
-  REQUIRE(s.nbp == 3);
-  REQUIRE(s.nwp == 4);
-  REQUIRE(s.rbp == 5);
-  REQUIRE(s.rwp == 6);
+  REQUIRE(s.Parse("1234.56"));
+  REQUIRE(s == SixTuple(1, 2, 3, 4, 5, 6));
+  REQUIRE_FALSE(s.Parse("1234.5"));
+  REQUIRE_FALSE(s.Parse("1234.567"));
+  REQUIRE_FALSE(s.Parse("1234-56"));
+  REQUIRE_FALSE(s.Parse("a234.56"));
+  REQUIRE_FALSE(s.Parse("1234.5Z"));
+}
+
+TEST_CASE("SixTuple ParseOrDie", "[SixTuple]") {
+  REQUIRE(SixTuple::ParseOrDie("1234.56") == SixTuple(1, 2, 3, 4, 5, 6));
 }

@@ -23,7 +23,8 @@ TEST_CASE("Choose", "[Combinator]") {
   REQUIRE(Choose(9, 0) == 1);
   REQUIRE(Choose(13, 7) == 1716);
   REQUIRE(Choose(19, 15) == 3876);
-  REQUIRE_THROWS(Choose(5, 6));  // 0 <= k <= n.
+  REQUIRE(Choose(0, 1) == 0);
+  REQUIRE(Choose(5, 6) == 0);
   REQUIRE_THROWS(Choose(999, 499));  // Refuse to calculate for large n.
 }
 

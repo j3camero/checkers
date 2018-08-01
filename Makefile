@@ -1,7 +1,8 @@
 CC=$(CXX)
 CPPFLAGS = -Wall #-O3
 
-all: test
+all: enumerator-benchmark \
+     test
 
 clean:
 	rm -rf *.o enumerator-benchmark test-main
@@ -13,7 +14,8 @@ enumerator-benchmark: enumerator-benchmark.o \
 											four-tuple.o \
 											pawn-cache.o \
 											seven-tuple.o \
-											six-tuple.o
+											six-tuple.o \
+											string-util.o
 
 test: test-main
 	./test-main
