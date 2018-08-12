@@ -19,6 +19,37 @@ const int human_readable_ordering[] = {
 
 const char human_readable_chars[] = "-WBwb";
 
+// Stores a precomputed table of offsets for checkers moves and jumps. These
+// are used for fast move generation.
+int move_offsets[32][4];
+int jump_offsets[32][4];
+
+// Precompute a table of offsets for checkers moves and jumps. This will be
+// used later for fast move generation.
+bool DoBoardPrecomputations() {
+  int dx = -1;
+  int dy = 1;
+  for (int i = 0; i < 32; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      int x;
+      int y;
+      Board::SpaceNumberToXY(i, x, y);
+      move_offsets[i][j] = Board::IsOnBoard(x + dx, y + dy) ?
+        Board::XYToSpaceNumber(x + dx, y + dy) : -1;
+      jump_offsets[i][j] = Board::IsOnBoard(x + 2 * dx, y + 2 * dy) ?
+        Board::XYToSpaceNumber(x + 2 * dx, y + 2 * dy) : -1;
+      // Rotate the direction 90 degrees clockwise.
+      int tmp = dy;
+      dy = -dx;
+      dx = tmp;
+    }
+  }
+  return true;
+}
+
+// This line make the precomputations run before main().
+bool done_board_precomputations = DoBoardPrecomputations();
+
 Board::Board() {
   Clear();
 }
@@ -380,6 +411,68 @@ SevenTuple Board::MirrorIndex() const {
   SixTuple db = WhichDatabaseSlice().Mirror();
   uint64 index = MirrorIndex(db);
   return SevenTuple(db, index);
+}
+
+bool Board::PawnCaptures(int from, std::vector<SevenTuple>& captures) {
+  return false;
+}
+
+bool Board::KingCaptures(int from, std::vector<SevenTuple>& captures) {
+  return false;
+}
+
+bool Board::ConversionMoves(int from, std::vector<uint64>& moves, SixTuple& db) {
+  return false;
+}
+
+bool Board::PawnMoves(int from, std::vector<uint64>& moves) {
+  const SixTuple db = WhichDatabaseSlice();
+  for (int direction = 0; direction < 2; ++direction) {
+    const int to = move_offsets[from][direction];
+    if (to >= 0 && pieces[to] == Empty) {
+      MovePiece(from, to);
+      moves.push_back(MirrorIndex(db.Mirror()));
+      MovePiece(to, from);
+    }
+  }
+  return moves.size() > 0;
+}
+
+bool Board::KingMoves(int from, std::vector<uint64>& moves) {
+  return false;
+}
+
+bool Board::AnyPawnCaptures(int from) {
+  return false;
+}
+
+bool Board::AnyKingCaptures(int from) {
+  return false;
+}
+
+bool Board::AnyConversionMoves(int from) {
+  return false;
+}
+
+bool Board::AnyPawnMoves(int from) {
+  return false;
+}
+
+bool Board::AnyKingMoves(int from) {
+  return false;
+}
+
+bool Board::IsOnBoard(int x, int y) {
+  return x >= 0 && y >= 0 && x < 8 && y < 8;
+}
+
+int Board::XYToSpaceNumber(int x, int y) {
+  return (x / 2) + (y * 4);
+}
+
+void Board::SpaceNumberToXY(int space, int& x, int& y) {
+  y = space / 4;
+  x = 2 * (space % 4) + (y % 2);
 }
 
 bool Board::operator==(const Board& other) const {

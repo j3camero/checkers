@@ -27,7 +27,7 @@ class SixTuple : public FourTuple {
   SixTuple();
 
   // Reverses the colors.
-  SixTuple Mirror();
+  SixTuple Mirror() const;
 
   // Parses a SixTuple in the format "XXXX.XX" in-place. Returns true on
   // success, false on error.

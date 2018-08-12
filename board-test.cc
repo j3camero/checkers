@@ -916,3 +916,110 @@ TEST_CASE("MirrorIndex is self consistent, 28M+", "[Board]") {
     REQUIRE(b.MirrorIndex() == b.Mirror().Index());
   }
 }
+
+TEST_CASE("Reasoning about the 2D board.", "[Board]") {
+  REQUIRE(Board::IsOnBoard(0, 0));
+  REQUIRE(Board::IsOnBoard(7, 7));
+  REQUIRE(Board::IsOnBoard(0, 7));
+  REQUIRE(Board::IsOnBoard(7, 0));
+  REQUIRE(Board::IsOnBoard(4, 3));
+  REQUIRE_FALSE(Board::IsOnBoard(0, -1));
+  REQUIRE_FALSE(Board::IsOnBoard(-2, 0));
+  REQUIRE_FALSE(Board::IsOnBoard(8, 5));
+  REQUIRE_FALSE(Board::IsOnBoard(2, 9));
+  REQUIRE(Board::XYToSpaceNumber(0, 0) == 0);
+  REQUIRE(Board::XYToSpaceNumber(3, 1) == 5);
+  REQUIRE(Board::XYToSpaceNumber(1, 7) == 28);
+  REQUIRE(Board::XYToSpaceNumber(7, 7) == 31);
+  for (int i = 0; i < 32; ++i) {
+    int x;
+    int y;
+    Board::SpaceNumberToXY(i, x, y);
+    REQUIRE(Board::XYToSpaceNumber(x, y) == i);
+  }
+}
+
+TEST_CASE("Pawn move generation (non-converting).", "[Board]") {
+  Board b("   -   -   -   - "
+          " -   b   -   -   "
+          "   -   -   -   - "
+          " -   -   w   -   "
+          "   -   -   -   - "
+          " -   -   b   -   "
+          "   -   -   -   - "
+          " -   -   -   -   ");
+  std::vector<uint64> moves;
+  b.PawnMoves(10, moves);
+  REQUIRE(moves.size() == 2);
+  SixTuple db = b.WhichDatabaseSlice();
+  REQUIRE(Board(db.Mirror(), moves[0]).Mirror() == Board(
+    "   -   -   -   - "
+    " -   b   -   -   "
+    "   -   -   -   - "
+    " -   -   w   -   "
+    "   -   b   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   "
+  ));
+  REQUIRE(Board(db.Mirror(), moves[1]).Mirror() == Board(
+    "   -   -   -   - "
+    " -   b   -   -   "
+    "   -   -   -   - "
+    " -   -   w   -   "
+    "   -   -   b   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   "
+  ));
+}
+
+TEST_CASE("Pawn move edge of board.", "[Board]") {
+  Board b("   -   -   -   - "
+          " -   b   -   -   "
+          "   -   -   -   - "
+          " -   -   w   -   "
+          "   -   -   -   b "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " -   -   -   -   ");
+  std::vector<uint64> moves;
+  b.PawnMoves(15, moves);
+  REQUIRE(moves.size() == 1);
+  SixTuple db = b.WhichDatabaseSlice();
+  REQUIRE(Board(db.Mirror(), moves[0]).Mirror() == Board(
+    "   -   -   -   - "
+    " -   b   -   -   "
+    "   -   -   -   - "
+    " -   -   w   b   "
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   "
+  ));
+}
+
+TEST_CASE("Pawn move blocked by another piece.", "[Board]") {
+  Board b("   -   -   -   - "
+          " -   b   -   -   "
+          "   -   -   -   - "
+          " -   -   w   -   "
+          "   -   -   b   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " -   -   -   -   ");
+  std::vector<uint64> moves;
+  b.PawnMoves(14, moves);
+  REQUIRE(moves.size() == 1);
+  SixTuple db = b.WhichDatabaseSlice();
+  REQUIRE(Board(db.Mirror(), moves[0]).Mirror() == Board(
+    "   -   -   -   - "
+    " -   b   -   -   "
+    "   -   -   -   - "
+    " -   -   w   b   "
+    "   -   -   -   - "
+    " -   -   -   -   "
+    "   -   -   -   - "
+    " -   -   -   -   "
+  ));
+}

@@ -18,7 +18,7 @@ SixTuple::SixTuple()
   // Body is empty because of initializer lists.
 }
 
-SixTuple SixTuple::Mirror() {
+SixTuple SixTuple::Mirror() const {
   // Black and white are reversed.
   return SixTuple(nwk, nbk, nwp, nbp, rwp, rbp);
 }

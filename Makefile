@@ -1,5 +1,5 @@
 CC=$(CXX)
-CPPFLAGS = -Wall #-O3
+CPPFLAGS = -Wall #-O3 -funroll-loops
 
 all: enumerator-benchmark \
      test
