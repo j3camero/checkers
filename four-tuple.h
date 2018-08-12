@@ -20,7 +20,7 @@ class FourTuple {
   FourTuple();
 
   // Reverses the colors.
-  FourTuple Mirror();
+  FourTuple Mirror() const;
 
   // Operators.
   bool operator==(const FourTuple& other) const;

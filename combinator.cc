@@ -10,7 +10,7 @@ std::vector<std::vector<uint64> > choose_cache;
 
 // Precompute factorials and binomial coefficients. This function should be
 // run before any calls to Factorial(n) or Choose(n,k).
-bool DoPrecomputations() {
+bool DoCombinatorPrecomputations() {
   // I've heard that Factorial(21) exceeds 64-bit integer range.
   const int max_factorial = 20;
   uint64 f = 1;
@@ -32,7 +32,7 @@ bool DoPrecomputations() {
 }
 
 // This line make the precomputations run before main().
-bool done_precomputations = DoPrecomputations();
+bool done_combinator_precomputations = DoCombinatorPrecomputations();
 
 uint64 Factorial(unsigned int n) {
   if (n < factorial_cache.size()) {

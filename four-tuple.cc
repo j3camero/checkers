@@ -17,7 +17,7 @@ FourTuple::FourTuple()
   // Body is empty because of initializer lists.
 }
 
-FourTuple FourTuple::Mirror() {
+FourTuple FourTuple::Mirror() const {
   // Black and white are reversed.
   return FourTuple(nwk, nbk, nwp, nbp);
 }
