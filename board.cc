@@ -33,7 +33,7 @@ bool DoBoardPrecomputations() {
     for (int j = 0; j < 4; ++j) {
       int x;
       int y;
-      Board::SpaceNumberToXY(i, x, y);
+      Board::SpaceNumberToXY(i, &x, &y);
       move_offsets[i][j] = Board::IsOnBoard(x + dx, y + dy) ?
         Board::XYToSpaceNumber(x + dx, y + dy) : -1;
       jump_offsets[i][j] = Board::IsOnBoard(x + 2 * dx, y + 2 * dy) ?
@@ -413,53 +413,63 @@ SevenTuple Board::MirrorIndex() const {
   return SevenTuple(db, index);
 }
 
-bool Board::PawnCaptures(int from, std::vector<SevenTuple>& captures) {
+bool Board::PawnCaptures(int from, std::vector<SevenTuple>* captures) {
   return false;
 }
 
-bool Board::KingCaptures(int from, std::vector<SevenTuple>& captures) {
+bool Board::KingCaptures(int from, std::vector<SevenTuple>* captures) {
   return false;
 }
 
-bool Board::ConversionMoves(int from, std::vector<uint64>& moves, SixTuple& db) {
-  return false;
-}
-
-bool Board::PawnMoves(int from, std::vector<uint64>& moves) {
-  const SixTuple db = WhichDatabaseSlice();
+bool Board::ConversionMoves(
+  int from, std::vector<uint64>* moves, SixTuple* db) {
   for (int direction = 0; direction < 2; ++direction) {
     const int to = move_offsets[from][direction];
     if (to >= 0 && pieces[to] == Empty) {
+      if (!moves) {
+        return true;
+      }
+      pieces[from] = Empty;
+      pieces[to] = to < 28 ? BlackPawn : BlackKing;
+      SevenTuple mi = MirrorIndex();
+      moves->push_back(mi.GetIndex());
+      *db = mi.GetDB();
+      pieces[to] = Empty;
+      pieces[from] = BlackPawn;
+    }
+  }
+  if (!moves) {
+    return false;
+  }
+  return moves->size() > 0;
+}
+
+bool Board::NonConversionMoves(
+  int from, int max_direction, std::vector<uint64>* moves) {
+  const SixTuple db = WhichDatabaseSlice();
+  for (int direction = 0; direction < max_direction; ++direction) {
+    const int to = move_offsets[from][direction];
+    if (to >= 0 && pieces[to] == Empty) {
+      if (!moves) {
+        return true;
+      }
       MovePiece(from, to);
-      moves.push_back(MirrorIndex(db.Mirror()));
+      moves->push_back(MirrorIndex(db.Mirror()));
       MovePiece(to, from);
     }
   }
-  return moves.size() > 0;
+  if (!moves) {
+    return false;
+  }
+  return moves->size() > 0;
 }
 
-bool Board::KingMoves(int from, std::vector<uint64>& moves) {
-  return false;
+bool Board::PawnMoves(int from, std::vector<uint64>* moves) {
+  return NonConversionMoves(from, 2, moves);
 }
 
-bool Board::AnyPawnCaptures(int from) {
-  return false;
-}
-
-bool Board::AnyKingCaptures(int from) {
-  return false;
-}
-
-bool Board::AnyConversionMoves(int from) {
-  return false;
-}
-
-bool Board::AnyPawnMoves(int from) {
-  return false;
-}
-
-bool Board::AnyKingMoves(int from) {
-  return false;
+bool Board::KingMoves(int from, std::vector<uint64>* moves) {
+  return NonConversionMoves(from, 4, moves);
 }
 
 bool Board::IsOnBoard(int x, int y) {
@@ -470,9 +480,9 @@ int Board::XYToSpaceNumber(int x, int y) {
   return (x / 2) + (y * 4);
 }
 
-void Board::SpaceNumberToXY(int space, int& x, int& y) {
-  y = space / 4;
-  x = 2 * (space % 4) + (y % 2);
+void Board::SpaceNumberToXY(int space, int* x, int* y) {
+  *y = space / 4;
+  *x = 2 * (space % 4) + (*y % 2);
 }
 
 bool Board::operator==(const Board& other) const {
