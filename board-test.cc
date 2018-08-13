@@ -1381,3 +1381,145 @@ TEST_CASE("Pawn capture blocked by another piece.", "[Board]") {
   REQUIRE_FALSE(b.PawnCaptures(13, &captures));
   REQUIRE(captures.size() == 0);
 }
+
+TEST_CASE("King captures.", "[Board]") {
+  Board b("   -   -   -   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " -   w   W   -   "
+          "   -   B   -   - "
+          " -   W   w   -   "
+          "   -   -   -   - "
+          " -   -   -   -   ");
+  REQUIRE(b.KingCaptures(13));
+  std::set<SevenTuple> captures;
+  REQUIRE(b.KingCaptures(13, &captures));
+  REQUIRE(captures.size() == 4);
+  REQUIRE(captures.count(Board("   -   -   -   - "
+                               " -   -   -   -   "
+                               "   B   -   -   - "
+                               " -   -   W   -   "
+                               "   -   -   -   - "
+                               " -   W   w   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   ").Mirror().Index()));
+  REQUIRE(captures.count(Board("   -   -   -   - "
+                               " -   -   -   -   "
+                               "   -   -   B   - "
+                               " -   w   -   -   "
+                               "   -   -   -   - "
+                               " -   W   w   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   ").Mirror().Index()));
+  REQUIRE(captures.count(Board("   -   -   -   - "
+                               " -   -   -   -   "
+                               "   -   -   -   - "
+                               " -   w   W   -   "
+                               "   -   -   -   - "
+                               " -   W   -   -   "
+                               "   -   -   B   - "
+                               " -   -   -   -   ").Mirror().Index()));
+  REQUIRE(captures.count(Board("   -   -   -   - "
+                               " -   -   -   -   "
+                               "   -   -   -   - "
+                               " -   w   W   -   "
+                               "   -   -   -   - "
+                               " -   -   w   -   "
+                               "   B   -   -   - "
+                               " -   -   -   -   ").Mirror().Index()));
+}
+
+TEST_CASE("King cyclical capture.", "[Board]") {
+  // This case is difficult because the king could capture either way around
+  // the cycle. It checks for de-duplication.
+  Board b("   -   -   -   - "
+          " -   w   W   -   "
+          "   B   -   -   - "
+          " -   W   w   -   "
+          "   -   -   -   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " -   -   -   -   ");
+  REQUIRE(b.KingCaptures(20));
+  std::set<SevenTuple> captures;
+  REQUIRE(b.KingCaptures(20, &captures));
+  REQUIRE(captures.size() == 1);
+  REQUIRE(captures.count(Board("   -   -   -   - "
+                               " -   -   -   -   "
+                               "   B   -   -   - "
+                               " -   -   -   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   ").Mirror().Index()));
+}
+
+TEST_CASE("King double capture with branches.", "[Board]") {
+  // Tests the recursive handling of jumps.
+  Board b("   -   B   -   - "
+          " -   w   W   w   "
+          "   -   -   -   - "
+          " -   b   W   -   "
+          "   -   -   -   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " -   -   -   -   ");
+  REQUIRE(b.KingCaptures(29));
+  std::set<SevenTuple> captures;
+  REQUIRE(b.KingCaptures(29, &captures));
+  REQUIRE(captures.size() == 3);
+  REQUIRE(captures.count(Board("   -   -   -   - "
+                               " -   -   W   w   "
+                               "   B   -   -   - "
+                               " -   b   W   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   ").Mirror().Index()));
+  REQUIRE(captures.count(Board("   -   -   -   - "
+                               " -   w   -   w   "
+                               "   -   -   -   - "
+                               " -   b   -   -   "
+                               "   -   B   -   - "
+                               " -   -   -   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   ").Mirror().Index()));
+  REQUIRE(captures.count(Board("   -   -   -   B "
+                               " -   w   -   -   "
+                               "   -   -   -   - "
+                               " -   b   W   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   ").Mirror().Index()));
+}
+
+TEST_CASE("King capture blocked by edge of board.", "[Board]") {
+  Board b("   -   -   -   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " w   -   -   -   "
+          "   B   -   -   - "
+          " W   -   -   -   "
+          "   -   -   -   - "
+          " -   -   -   -   ");
+  REQUIRE_FALSE(b.KingCaptures(12));
+  std::set<SevenTuple> captures;
+  REQUIRE_FALSE(b.KingCaptures(12, &captures));
+  REQUIRE(captures.size() == 0);
+}
+
+TEST_CASE("King capture blocked by another piece.", "[Board]") {
+  Board b("   -   -   -   - "
+          " -   -   -   -   "
+          "   b   -   -   - "
+          " -   w   -   -   "
+          "   -   B   -   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " -   -   -   -   ");
+  REQUIRE_FALSE(b.KingCaptures(13));
+  std::set<SevenTuple> captures;
+  REQUIRE_FALSE(b.KingCaptures(13, &captures));
+  REQUIRE(captures.size() == 0);
+}
