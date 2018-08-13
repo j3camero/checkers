@@ -45,6 +45,14 @@ TEST_CASE("SixTuple equality operator", "[SixTuple]") {
   REQUIRE(SixTuple(2, 4, 3, 1, 4, 3) != SixTuple(2, 4, 3, 1, 4, 2));
 }
 
+TEST_CASE("SixTuple comparison operator", "[SixTuple]") {
+  REQUIRE(SixTuple(1, 2, 3, 4, 5, 6) < SixTuple(2, 2, 3, 4, 5, 6));
+  REQUIRE_FALSE(SixTuple(2, 2, 3, 4, 5, 6) < SixTuple(1, 2, 3, 4, 5, 6));
+  REQUIRE(SixTuple(1, 2, 3, 4, 5, 6) < SixTuple(1, 5, 4, 3, 2, 1));
+  REQUIRE(SixTuple(1, 2, 3, 4, 5, 6) < SixTuple(1, 2, 3, 4, 5, 7));
+  REQUIRE_FALSE(SixTuple(4, 2, 3, 1, 4, 3) < SixTuple(4, 2, 3, 1, 4, 3));
+}
+
 TEST_CASE("SixTuple Parse", "[SixTuple]") {
   SixTuple s;
   REQUIRE(s.Parse("1234.56"));

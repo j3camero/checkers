@@ -40,6 +40,7 @@ class SixTuple : public FourTuple {
   // Operators.
   bool operator==(const SixTuple& other) const;
   bool operator!=(const SixTuple& other) const;
+  bool operator<(const SixTuple& other) const;
 
   // Outputs as a 7-character string of digits with no newline, in the order:
   // "nbk nwk nbp nwp . rbp rwp" as described in Lake (1994). ex: 3212.43

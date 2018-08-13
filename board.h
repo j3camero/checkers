@@ -2,6 +2,7 @@
 #define _BOARD_H_
 
 #include <iostream>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -75,49 +76,45 @@ class Board {
   uint64 MirrorIndex(const SixTuple& db) const;
   SevenTuple MirrorIndex() const;
 
+  // True iff the piece is a white pawn or white king, false otherwise.
+  static bool IsWhite(Piece p);
+
   // Calculates the mirror indices of pawn captures starting from 'from'.
   // Assumes that the piece on 'from' is a black pawn. A list of SevenTuples
   // is returned, since the captures may result in positions from multiple
   // database slices.
-  bool PawnCaptures(int from, std::vector<SevenTuple>& captures);
+  bool PawnCaptures(int from, std::set<SevenTuple>* captures = NULL);
 
   // Calculates the mirror indices of king captures starting from 'from'.
   // Assumes that the piece on 'from' is a black king. A list of SevenTuples
   // is returned, since the captures may result in positions from multiple
   // database slices.
-  bool KingCaptures(int from, std::vector<SevenTuple>& captures);
+  bool KingCaptures(int from, std::set<SevenTuple>* captures = NULL);
 
   // Calculates the mirror indices of moves that advance the leading black pawn.
   // This function must be used instead of PawnMoves in exactly this situation.
   // Assumes that the piece on 'from' is a black pawn. Returns a list of indices
   // but only a single db SixTuple, since all the resulting moves flow into one
   // database slice.
-  bool ConversionMoves(int from, std::vector<uint64>& moves, SixTuple& db);
+  bool ConversionMoves(
+    int from, std::vector<uint64>* moves = NULL, SixTuple* db = NULL);
 
   // Calculates the mirror indices of pawn moves that do not advance the leading
   // black pawn. Don't use this for moves that advance the leading black pawn,
   // or the result will be undefined. Assumes that the piece on 'from' is a
   // black pawn.
-  bool PawnMoves(int from, std::vector<uint64>& moves);
+  bool PawnMoves(int from, std::vector<uint64>* moves = NULL);
 
   // Calculates the mirror indices of king moves. Assumes that the piece on
   // 'from' is a black king.
-  bool KingMoves(int from, std::vector<uint64>& moves);
-
-  // These check for certain move types without calculating the moves. The
-  // functions short-circuit as soon as any eligible move is found.
-  bool AnyPawnCaptures(int from);
-  bool AnyKingCaptures(int from);
-  bool AnyConversionMoves(int from);
-  bool AnyPawnMoves(int from);
-  bool AnyKingMoves(int from);
+  bool KingMoves(int from, std::vector<uint64>* moves = NULL);
 
   // These are used for precomputing move and jump offset tables, not for
   // live move generation. Reasoning about the 2D shape of the board in
   // real-time would be too slow.
   static bool IsOnBoard(int x, int y);
   static int XYToSpaceNumber(int x, int y);
-  static void SpaceNumberToXY(int space, int& x, int& y);
+  static void SpaceNumberToXY(int space, int* x, int* y);
 
   // Equality operator.
   bool operator==(const Board& other) const;
@@ -130,6 +127,18 @@ class Board {
   friend std::ostream& operator<<(std::ostream &out, const Board& board);
 
  private:
+  // Calculates the mirror indices of moves that do not advance the leading
+  // black pawn. max_direction = 2 for pawns and 4 for kings.
+  bool NonConversionMoves(int from,
+                          int max_direction,
+                          std::vector<uint64>* moves);
+
+  // Helper function that generates captures for pawns and kings.
+  bool GenerateCaptures(int from,
+                        int max_direction,
+                        std::set<SevenTuple>* captures = NULL);
+
+  // Stores the state of the board.
   Piece pieces[32];
 };
 
