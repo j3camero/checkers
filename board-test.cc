@@ -1,6 +1,9 @@
 #include "board.h"
 #include "catch.hpp"
 
+#include <set>
+#include <vector>
+
 #include "seven-tuple.h"
 #include "six-tuple.h"
 
@@ -1276,4 +1279,105 @@ TEST_CASE("King move blocked completely.", "[Board]") {
   std::vector<uint64> moves;
   REQUIRE_FALSE(b.KingMoves(24, &moves));
   REQUIRE(moves.size() == 0);
+}
+
+TEST_CASE("Pawn captures.", "[Board]") {
+  Board b("   -   -   -   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " -   w   w   -   "
+          "   -   b   -   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " -   -   -   -   ");
+  REQUIRE(b.PawnCaptures(13));
+  std::set<SevenTuple> captures;
+  REQUIRE(b.PawnCaptures(13, &captures));
+  REQUIRE(captures.size() == 2);
+  REQUIRE(captures.count(Board("   -   -   -   - "
+                               " -   -   -   -   "
+                               "   b   -   -   - "
+                               " -   -   w   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   ").Mirror().Index()));
+  REQUIRE(captures.count(Board("   -   -   -   - "
+                               " -   -   -   -   "
+                               "   -   -   b   - "
+                               " -   w   -   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   ").Mirror().Index()));
+}
+
+TEST_CASE("Pawn double capture with branches.", "[Board]") {
+  // Tests the recursive handling of jumps.
+  Board b("   -   -   -   - "
+          " -   b   W   w   "
+          "   -   -   -   - "
+          " -   w   W   -   "
+          "   -   b   -   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " -   -   -   -   ");
+  REQUIRE(b.PawnCaptures(13));
+  std::set<SevenTuple> captures;
+  REQUIRE(b.PawnCaptures(13, &captures));
+  REQUIRE(captures.size() == 3);
+  REQUIRE(captures.count(Board("   -   -   -   - "
+                               " -   b   W   w   "
+                               "   b   -   -   - "
+                               " -   -   W   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   ").Mirror().Index()));
+  REQUIRE(captures.count(Board("   -   -   -   B "
+                               " -   b   W   -   "
+                               "   -   -   -   - "
+                               " -   w   -   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   ").Mirror().Index()));
+  REQUIRE(captures.count(Board("   -   B   -   - "
+                               " -   b   -   w   "
+                               "   -   -   -   - "
+                               " -   w   -   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   "
+                               "   -   -   -   - "
+                               " -   -   -   -   ").Mirror().Index()));
+}
+
+TEST_CASE("Pawn capture blocked by edge of board.", "[Board]") {
+  Board b("   -   -   -   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " w   -   -   -   "
+          "   b   -   -   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " -   -   -   -   ");
+  REQUIRE_FALSE(b.PawnCaptures(12));
+  std::set<SevenTuple> captures;
+  REQUIRE_FALSE(b.PawnCaptures(12, &captures));
+  REQUIRE(captures.size() == 0);
+}
+
+TEST_CASE("Pawn capture blocked by another piece.", "[Board]") {
+  Board b("   -   -   -   - "
+          " -   -   -   -   "
+          "   B   -   -   - "
+          " -   w   -   -   "
+          "   -   b   -   - "
+          " -   -   -   -   "
+          "   -   -   -   - "
+          " -   -   -   -   ");
+  REQUIRE_FALSE(b.PawnCaptures(13));
+  std::set<SevenTuple> captures;
+  REQUIRE_FALSE(b.PawnCaptures(13, &captures));
+  REQUIRE(captures.size() == 0);
 }

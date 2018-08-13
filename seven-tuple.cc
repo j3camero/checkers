@@ -1,5 +1,7 @@
 #include "seven-tuple.h"
 
+#include <iostream>
+
 SevenTuple::SevenTuple(const SixTuple& db, uint64 index)
   : db(db), index(index) {
   // Body is empty because of initializer lists.
@@ -24,6 +26,14 @@ bool SevenTuple::operator==(const SevenTuple& other) const {
 
 bool SevenTuple::operator!=(const SevenTuple& other) const {
   return !(*this == other);
+}
+
+bool SevenTuple::operator<(const SevenTuple& other) const {
+  if (db < other.db) return true;
+  if (other.db < db) return false;
+  if (index < other.index) return true;
+  if (other.index < index) return false;
+  return false;
 }
 
 std::ostream& operator<<(std::ostream &out, const SevenTuple& s) {

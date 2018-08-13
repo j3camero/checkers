@@ -59,6 +59,22 @@ bool SixTuple::operator!=(const SixTuple& other) const {
   return !(*this == other);
 }
 
+bool SixTuple::operator<(const SixTuple& other) const {
+  if (nbp < other.nbp) return true;
+  if (nbp > other.nbp) return false;
+  if (nwp < other.nwp) return true;
+  if (nwp > other.nwp) return false;
+  if (nbk < other.nbk) return true;
+  if (nbk > other.nbk) return false;
+  if (nwk < other.nwk) return true;
+  if (nwk > other.nwk) return false;
+  if (rbp < other.rbp) return true;
+  if (rbp > other.rbp) return false;
+  if (rwp < other.rwp) return true;
+  if (rwp > other.rwp) return false;
+  return false;
+}
+
 std::ostream& operator<<(std::ostream &out, const SixTuple& p) {
   out << p.nwk << p.nbk << p.nbp << p.nwp << "." << p.rbp << p.rwp;
   return out;

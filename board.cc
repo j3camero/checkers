@@ -1,5 +1,8 @@
 #include "board.h"
 
+#include <set>
+#include <vector>
+
 #include "combinator.h"
 #include "pawn-cache.h"
 #include "seven-tuple.h"
@@ -413,30 +416,41 @@ SevenTuple Board::MirrorIndex() const {
   return SevenTuple(db, index);
 }
 
-bool Board::PawnCaptures(int from, std::vector<SevenTuple>* captures) {
-  return false;
+bool Board::IsWhite(Piece p) {
+  switch (p) {
+    case WhitePawn:
+    case WhiteKing:
+      return true;
+    default:
+      return false;
+  };
 }
 
-bool Board::KingCaptures(int from, std::vector<SevenTuple>* captures) {
-  return false;
+bool Board::PawnCaptures(int from, std::set<SevenTuple>* captures) {
+  return GenerateCaptures(from, 2, captures);
+}
+
+bool Board::KingCaptures(int from, std::set<SevenTuple>* captures) {
+  return GenerateCaptures(from, 4, captures);
 }
 
 bool Board::ConversionMoves(
   int from, std::vector<uint64>* moves, SixTuple* db) {
   for (int direction = 0; direction < 2; ++direction) {
     const int to = move_offsets[from][direction];
-    if (to >= 0 && pieces[to] == Empty) {
-      if (!moves) {
-        return true;
-      }
-      pieces[from] = Empty;
-      pieces[to] = to < 28 ? BlackPawn : BlackKing;
-      SevenTuple mi = MirrorIndex();
-      moves->push_back(mi.GetIndex());
-      *db = mi.GetDB();
-      pieces[to] = Empty;
-      pieces[from] = BlackPawn;
+    if (to < 0 || pieces[to] != Empty) {
+      continue;
     }
+    if (!moves) {
+      return true;
+    }
+    pieces[from] = Empty;
+    pieces[to] = to < 28 ? BlackPawn : BlackKing;
+    SevenTuple mi = MirrorIndex();
+    moves->push_back(mi.GetIndex());
+    *db = mi.GetDB();
+    pieces[to] = Empty;
+    pieces[from] = BlackPawn;
   }
   if (!moves) {
     return false;
@@ -449,19 +463,49 @@ bool Board::NonConversionMoves(
   const SixTuple db = WhichDatabaseSlice();
   for (int direction = 0; direction < max_direction; ++direction) {
     const int to = move_offsets[from][direction];
-    if (to >= 0 && pieces[to] == Empty) {
-      if (!moves) {
-        return true;
-      }
-      MovePiece(from, to);
-      moves->push_back(MirrorIndex(db.Mirror()));
-      MovePiece(to, from);
+    if (to < 0 || pieces[to] != Empty) {
+      continue;
     }
+    if (!moves) {
+      return true;
+    }
+    MovePiece(from, to);
+    moves->push_back(MirrorIndex(db.Mirror()));
+    MovePiece(to, from);
   }
   if (!moves) {
     return false;
   }
   return moves->size() > 0;
+}
+
+bool Board::GenerateCaptures(int from,
+                             int max_direction,
+                             std::set<SevenTuple>* captures) {
+  bool found_jumps = false;
+  const Piece moving_piece = pieces[from];
+  for (int direction = 0; direction < max_direction; ++direction) {
+    const int to = jump_offsets[from][direction];
+    const int over = move_offsets[from][direction];
+    const Piece captured_piece = pieces[over];
+    if (to < 0 || pieces[to] != Empty || !IsWhite(captured_piece)) {
+      continue;
+    }
+    if (!captures) {
+      return true;
+    }
+    found_jumps = true;
+    pieces[from] = Empty;
+    pieces[over] = Empty;
+    pieces[to] = to < 28 ? BlackPawn : BlackKing;
+    if (!PawnCaptures(to, captures)) {
+      captures->insert(MirrorIndex());
+    }
+    pieces[from] = moving_piece;
+    pieces[over] = captured_piece;
+    pieces[to] = Empty;
+  }
+  return found_jumps;
 }
 
 bool Board::PawnMoves(int from, std::vector<uint64>* moves) {

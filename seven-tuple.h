@@ -27,6 +27,7 @@ class SevenTuple {
   // Operators.
   bool operator==(const SevenTuple& other) const;
   bool operator!=(const SevenTuple& other) const;
+  bool operator<(const SevenTuple& other) const;
 
   // Outputs a string in the format db:index. ex: 3212.43:98765
   friend std::ostream& operator<<(std::ostream &out, const SevenTuple& e);

@@ -2,6 +2,7 @@
 #define _BOARD_H_
 
 #include <iostream>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -75,17 +76,20 @@ class Board {
   uint64 MirrorIndex(const SixTuple& db) const;
   SevenTuple MirrorIndex() const;
 
+  // True iff the piece is a white pawn or white king, false otherwise.
+  static bool IsWhite(Piece p);
+
   // Calculates the mirror indices of pawn captures starting from 'from'.
   // Assumes that the piece on 'from' is a black pawn. A list of SevenTuples
   // is returned, since the captures may result in positions from multiple
   // database slices.
-  bool PawnCaptures(int from, std::vector<SevenTuple>* captures = NULL);
+  bool PawnCaptures(int from, std::set<SevenTuple>* captures = NULL);
 
   // Calculates the mirror indices of king captures starting from 'from'.
   // Assumes that the piece on 'from' is a black king. A list of SevenTuples
   // is returned, since the captures may result in positions from multiple
   // database slices.
-  bool KingCaptures(int from, std::vector<SevenTuple>* captures = NULL);
+  bool KingCaptures(int from, std::set<SevenTuple>* captures = NULL);
 
   // Calculates the mirror indices of moves that advance the leading black pawn.
   // This function must be used instead of PawnMoves in exactly this situation.
@@ -128,6 +132,11 @@ class Board {
   bool NonConversionMoves(int from,
                           int max_direction,
                           std::vector<uint64>* moves);
+
+  // Helper function that generates captures for pawns and kings.
+  bool GenerateCaptures(int from,
+                        int max_direction,
+                        std::set<SevenTuple>* captures = NULL);
 
   // Stores the state of the board.
   Piece pieces[32];
