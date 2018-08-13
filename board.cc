@@ -497,8 +497,9 @@ bool Board::GenerateCaptures(int from,
     found_jumps = true;
     pieces[from] = Empty;
     pieces[over] = Empty;
-    pieces[to] = to < 28 ? BlackPawn : BlackKing;
-    if (!PawnCaptures(to, captures)) {
+    // This line promotes pawns to kings when they reach the last rank.
+    pieces[to] = to < 28 ? moving_piece : BlackKing;
+    if (!GenerateCaptures(to, max_direction, captures)) {
       captures->insert(MirrorIndex());
     }
     pieces[from] = moving_piece;
