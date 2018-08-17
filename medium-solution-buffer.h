@@ -15,10 +15,10 @@ enum Solution {
 };
 
 // Stores solution values for a block of related game positions.
-class SolutionBuffer {
+class MediumSolutionBuffer {
  public:
-  SolutionBuffer(uint64 length);
-  SolutionBuffer(const std::string& filename);
+  MediumSolutionBuffer(uint64 length);
+  MediumSolutionBuffer(const std::string& filename);
   Solution Get(uint64 index);
   void Set(uint64 index, Solution value);
   uint64 Length();

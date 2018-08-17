@@ -1,19 +1,19 @@
-#include "solution-buffer.h"
+#include "medium-solution-buffer.h"
 
 #include <fstream>
 
-SolutionBuffer::SolutionBuffer(uint64 length)
+MediumSolutionBuffer::MediumSolutionBuffer(uint64 length)
   : length(length), data(length / 32 + 1, 0) {
 }
 
-SolutionBuffer::SolutionBuffer(const std::string& filename) {
+MediumSolutionBuffer::MediumSolutionBuffer(const std::string& filename) {
   bool success = Read(filename);
   if (!success) {
-    throw "Failed to read SolutionBuffer from file.";
+    throw "Failed to read from file.";
   }
 }
 
-Solution SolutionBuffer::Get(uint64 index) {
+Solution MediumSolutionBuffer::Get(uint64 index) {
   const uint64 slot_index = index / 32;
   const uint64 slot = data[slot_index];
   const int index_within_slot = index % 32;
@@ -22,7 +22,7 @@ Solution SolutionBuffer::Get(uint64 index) {
   return value;
 }
 
-void SolutionBuffer::Set(uint64 index, Solution value) {
+void MediumSolutionBuffer::Set(uint64 index, Solution value) {
   const uint64 slot_index = index / 32;
   const uint64 slot = data[slot_index];
   const int index_within_slot = index % 32;
@@ -32,11 +32,11 @@ void SolutionBuffer::Set(uint64 index, Solution value) {
   data[slot_index] = shifted_value | cleared_slot;
 }
 
-uint64 SolutionBuffer::Length() {
+uint64 MediumSolutionBuffer::Length() {
   return length;
 }
 
-bool SolutionBuffer::Write(const std::string& filename) {
+bool MediumSolutionBuffer::Write(const std::string& filename) {
   std::ofstream file(filename.c_str(), std::ios::out | std::ios::binary);
   const uint64 version = 1;
   file.write((char*)&version, sizeof version);
@@ -48,7 +48,7 @@ bool SolutionBuffer::Write(const std::string& filename) {
   return true;
 }
 
-bool SolutionBuffer::Read(const std::string& filename) {
+bool MediumSolutionBuffer::Read(const std::string& filename) {
   std::ifstream file(filename.c_str(), std::ios::in | std::ios::binary);
   uint64 version;
   file.read((char*)&version, sizeof version);

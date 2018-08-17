@@ -1,8 +1,8 @@
 #include "catch.hpp"
-#include "solution-buffer.h"
+#include "medium-solution-buffer.h"
 
-TEST_CASE("Small buffer", "[SolutionBuffer]") {
-  SolutionBuffer b(7);
+TEST_CASE("Small buffer", "[MediumSolutionBuffer]") {
+  MediumSolutionBuffer b(7);
   REQUIRE(b.Length() == 7);
   REQUIRE(b.Get(0) == Unknown);
   REQUIRE(b.Get(6) == Unknown);
@@ -16,8 +16,8 @@ TEST_CASE("Small buffer", "[SolutionBuffer]") {
   REQUIRE(b.Get(6) == Draw);
 }
 
-TEST_CASE("Medium buffer", "[SolutionBuffer]") {
-  SolutionBuffer b(99);
+TEST_CASE("Medium buffer", "[MediumSolutionBuffer]") {
+  MediumSolutionBuffer b(99);
   REQUIRE(b.Length() == 99);
   REQUIRE(b.Get(0) == Unknown);
   REQUIRE(b.Get(98) == Unknown);
@@ -31,8 +31,8 @@ TEST_CASE("Medium buffer", "[SolutionBuffer]") {
   REQUIRE(b.Get(98) == Draw);
 }
 
-TEST_CASE("Large buffer", "[SolutionBuffer]") {
-  SolutionBuffer b(654321);
+TEST_CASE("Large buffer", "[MediumSolutionBuffer]") {
+  MediumSolutionBuffer b(654321);
   REQUIRE(b.Length() == 654321);
   REQUIRE(b.Get(0) == Unknown);
   REQUIRE(b.Get(654320) == Unknown);
@@ -46,15 +46,15 @@ TEST_CASE("Large buffer", "[SolutionBuffer]") {
   REQUIRE(b.Get(654320) == Draw);
 }
 
-TEST_CASE("Write to disk and read back", "[SolutionBuffer]") {
-  SolutionBuffer a(99);
+TEST_CASE("Write to disk and read back", "[MediumSolutionBuffer]") {
+  MediumSolutionBuffer a(99);
   a.Set(0, Win);
   a.Set(1, Loss);
   a.Set(98, Draw);
   const std::string filename("test-solution-buffer.egd");
   bool write_success = a.Write(filename);
   REQUIRE(write_success);
-  SolutionBuffer b(filename);
+  MediumSolutionBuffer b(filename);
   REQUIRE(b.Length() == 99);
   REQUIRE(b.Get(0) == Win);
   REQUIRE(b.Get(1) == Loss);

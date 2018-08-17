@@ -29,6 +29,6 @@ test-main: test-main.o \
            pawn-cache.o pawn-cache-test.o \
            seven-tuple.o seven-tuple-test.o \
            six-tuple.o six-tuple-test.o \
-           solution-buffer.o solution-buffer-test.o \
+           medium-solution-buffer.o medium-solution-buffer-test.o \
            string-util.o string-util-test.o \
 					 types-test.o
