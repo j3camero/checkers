@@ -1,9 +1,13 @@
 #include "medium-solution-buffer.h"
 
 #include <fstream>
+#include <vector>
+
+#include "small-solution-buffer.h"
+#include "types.h"
 
 MediumSolutionBuffer::MediumSolutionBuffer(uint64 length)
-  : length(length), data(length / 32 + 1, 0) {
+  : length(length), data(length / 32 + 1) {
 }
 
 MediumSolutionBuffer::MediumSolutionBuffer(const std::string& filename) {
@@ -15,21 +19,16 @@ MediumSolutionBuffer::MediumSolutionBuffer(const std::string& filename) {
 
 Solution MediumSolutionBuffer::Get(uint64 index) {
   const uint64 slot_index = index / 32;
-  const uint64 slot = data[slot_index];
+  const SmallSolutionBuffer& slot = data[slot_index];
   const int index_within_slot = index % 32;
-  const int bit_offset = 2 * index_within_slot;
-  const Solution value = (Solution)((slot >> bit_offset) & 3);
-  return value;
+  return slot.Get(index_within_slot);
 }
 
 void MediumSolutionBuffer::Set(uint64 index, Solution value) {
   const uint64 slot_index = index / 32;
-  const uint64 slot = data[slot_index];
+  SmallSolutionBuffer& slot = data[slot_index];
   const int index_within_slot = index % 32;
-  const int bit_offset = 2 * index_within_slot;
-  const uint64 cleared_slot = slot & ~(3 << bit_offset);
-  const uint64 shifted_value = ((uint64)((int)value)) << bit_offset;
-  data[slot_index] = shifted_value | cleared_slot;
+  slot.Set(index_within_slot, value);
 }
 
 uint64 MediumSolutionBuffer::Length() {

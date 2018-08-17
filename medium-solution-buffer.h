@@ -1,18 +1,11 @@
-#ifndef _SOLUTION_BUFFER_H_
-#define _SOLUTION_BUFFER_H_
+#ifndef _MEDIUM_SOLUTION_BUFFER_H_
+#define _MEDIUM_SOLUTION_BUFFER_H_
 
 #include <string>
 #include <vector>
 
+#include "small-solution-buffer.h"
 #include "types.h"
-
-// Game outcome value.
-enum Solution {
-  Unknown = 0,
-  Win = 1,
-  Loss = 2,
-  Draw = 3
-};
 
 // Stores solution values for a block of related game positions.
 class MediumSolutionBuffer {
@@ -28,7 +21,7 @@ class MediumSolutionBuffer {
   bool Read(const std::string& filename);
 
   uint64 length;
-  std::vector<uint64> data;
+  std::vector<SmallSolutionBuffer> data;
 };
 
 #endif

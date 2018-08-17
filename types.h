@@ -5,4 +5,12 @@
 
 typedef uint64_t uint64;
 
+// Game outcome value.
+enum Solution {
+  Unknown = 0,
+  Win = 1,
+  Loss = 2,
+  Draw = 3
+};
+
 #endif
