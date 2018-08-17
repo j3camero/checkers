@@ -5,7 +5,7 @@
 
 typedef uint64_t uint64;
 
-// Game solution values.
+// Game outcome value.
 enum Solution {
   Unknown = 0,
   Win = 1,
