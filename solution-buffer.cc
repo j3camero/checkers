@@ -2,15 +2,8 @@
 
 #include <fstream>
 
-SolutionBuffer::SolutionBuffer(uint64 length) : length(length) {
-  uint64 buffer_slots = length / 32;
-  if (length % 32 != 0) {
-    buffer_slots += 1;
-  }
-  data = new uint64[buffer_slots];
-  for (uint64 i = 0; i < buffer_slots; ++i) {
-    data[i] = 0;
-  }
+SolutionBuffer::SolutionBuffer(uint64 length)
+  : length(length), data(length / 32 + 1, 0) {
 }
 
 SolutionBuffer::SolutionBuffer(const std::string& filename) {
@@ -18,10 +11,6 @@ SolutionBuffer::SolutionBuffer(const std::string& filename) {
   if (!success) {
     throw "Failed to read SolutionBuffer from file.";
   }
-}
-
-SolutionBuffer::~SolutionBuffer() {
-  delete data;
 }
 
 Solution SolutionBuffer::Get(uint64 index) {
@@ -52,11 +41,7 @@ bool SolutionBuffer::Write(const std::string& filename) {
   const uint64 version = 1;
   file.write((char*)&version, sizeof version);
   file.write((char*)&length, sizeof length);
-  uint64 buffer_slots = length / 32;
-  if (length % 32 != 0) {
-    buffer_slots += 1;
-  }
-  for (uint64 i = 0; i < buffer_slots; ++i) {
+  for (uint64 i = 0; i < data.size(); ++i) {
     file.write((char*)&data[i], sizeof data[i]);
   }
   file.close();
@@ -68,12 +53,8 @@ bool SolutionBuffer::Read(const std::string& filename) {
   uint64 version;
   file.read((char*)&version, sizeof version);
   file.read((char*)&length, sizeof length);
-  uint64 buffer_slots = length / 32;
-  if (length % 32 != 0) {
-    buffer_slots += 1;
-  }
-  data = new uint64[buffer_slots];
-  for (uint64 i = 0; i < buffer_slots; ++i) {
+  data.resize(length / 32 + 1);
+  for (uint64 i = 0; i < data.size(); ++i) {
     file.read((char*)&data[i], sizeof data[i]);
   }
   file.close();

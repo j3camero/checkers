@@ -1,16 +1,24 @@
-// Stores solution values for a block of related game positions.
 #ifndef _SOLUTION_BUFFER_H_
 #define _SOLUTION_BUFFER_H_
 
 #include <string>
+#include <vector>
 
 #include "types.h"
 
+// Game outcome value.
+enum Solution {
+  Unknown = 0,
+  Win = 1,
+  Loss = 2,
+  Draw = 3
+};
+
+// Stores solution values for a block of related game positions.
 class SolutionBuffer {
  public:
   SolutionBuffer(uint64 length);
   SolutionBuffer(const std::string& filename);
-  ~SolutionBuffer();
   Solution Get(uint64 index);
   void Set(uint64 index, Solution value);
   uint64 Length();
@@ -20,7 +28,7 @@ class SolutionBuffer {
   bool Read(const std::string& filename);
 
   uint64 length;
-  uint64 *data;
+  std::vector<uint64> data;
 };
 
 #endif
