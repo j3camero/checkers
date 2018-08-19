@@ -12,10 +12,10 @@ class MediumSolutionBuffer {
  public:
   MediumSolutionBuffer(uint64 length);
   MediumSolutionBuffer(const std::string& filename);
-  Solution Get(uint64 index);
+  Solution Get(uint64 index) const;
   void Set(uint64 index, Solution value);
   uint64 Length();
-  bool Write(const std::string& filename);
+  bool Write(const std::string& filename) const;
 
  private:
   bool Read(const std::string& filename);
