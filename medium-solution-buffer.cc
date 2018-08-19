@@ -17,7 +17,7 @@ MediumSolutionBuffer::MediumSolutionBuffer(const std::string& filename) {
   }
 }
 
-Solution MediumSolutionBuffer::Get(uint64 index) {
+Solution MediumSolutionBuffer::Get(uint64 index) const {
   const uint64 slot_index = index / 32;
   const SmallSolutionBuffer& slot = data[slot_index];
   const int index_within_slot = index % 32;
@@ -35,7 +35,7 @@ uint64 MediumSolutionBuffer::Length() {
   return length;
 }
 
-bool MediumSolutionBuffer::Write(const std::string& filename) {
+bool MediumSolutionBuffer::Write(const std::string& filename) const {
   std::ofstream file(filename.c_str(), std::ios::out | std::ios::binary);
   const uint64 version = 1;
   file.write((char*)&version, sizeof version);
