@@ -17,6 +17,7 @@ enum Piece {
   BlackPawn = 4
 };
 
+// Represents one checkers board position. Does move generation logic.
 class Board {
  public:
   // Initialize an empty board.

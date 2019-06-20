@@ -8,6 +8,10 @@
 #include "types.h"
 
 // Stores solution values for a block of related game positions.
+//
+// Specifically designed to accomodate enormous buffer sizes in memory.
+// Organized internally as a "list of lists" of small buffers to make
+// allocating memory easier for the operating system.
 class LargeSolutionBuffer {
  public:
   LargeSolutionBuffer(uint64 length);

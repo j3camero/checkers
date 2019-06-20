@@ -39,3 +39,8 @@
 
 # Checkers endgame databases
 *.egd
+*.end
+
+# Binaries.
+enumerator-benchmark
+test-main
