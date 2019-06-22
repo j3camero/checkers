@@ -1,5 +1,7 @@
 #include "bit-string.h"
 
+#include <iostream>
+
 Bitstring::Bitstring() : size(0) {
   // Do nothing.
 }
@@ -71,6 +73,21 @@ void Bitstring::Append(const Bitstring& b) {
   }
 }
 
+uint64 Bitstring::ToUInt64() {
+  if (size > 64) {
+    return 0;
+  }
+  uint64 sum = 0;
+  uint64 mag = 1;
+  for (uint64 i = 0; i < size; ++i) {
+    if (Get(i)) {
+      sum += mag;
+    }
+    mag *= 2;
+  }
+  return sum;
+}
+
 bool Bitstring::operator==(const Bitstring& b) const {
   if (b.size != size) {
     return false;
@@ -88,6 +105,32 @@ bool Bitstring::operator!=(const Bitstring& b) const {
 }
 
 bool Bitstring::operator<(const Bitstring& b) const {
+  if (size < b.Size()) {
+    return true;
+  }
+  if (b.Size() < size) {
+    return false;
+  }
+  if (size == 0) {
+    // This case can't be handled nicely by the loop below, so it is
+    // handled individually here.
+    return false;
+  }
+  for (uint64 i = size - 1; i >= 0; --i) {
+    if (Get(i)) {
+      if (!b.Get(i)) {
+        return false;
+      }
+    } else {
+      if (b.Get(i)) {
+        return true;
+      }
+    }
+    // Needs to be here because the loop condition doesn't work.
+    if (i == 0) {
+      break;
+    }
+  }
   return false;
 }
 

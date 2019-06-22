@@ -14,19 +14,36 @@ typedef std::vector<uint64> Page;
 // A string of bits.
 class Bitstring {
  public:
+  // Makes an empty bit string with length zero.
   Bitstring();
+
+  // Makes a bit string with 1 bit.
   Bitstring(bool b);
+
+  // Makes a bit string with the given length, initialized to all zeros.
   Bitstring(uint64 length);
+
+  // Copy constructor.
   Bitstring(const Bitstring& b);
 
+  // Set and get individual bits.
   bool Get(uint64 index) const;
   void Set(uint64 index, bool b);
 
+  // How many bits in this bit string.
   uint64 Size() const;
+
+  // Resizes the bit string to a new length.
   void Resize(uint64 new_size);
 
+  // Add one bit to the end of the string.
   void Append(bool b);
+
+  // Add some bits from b to the end of this string.
   void Append(const Bitstring& b);
+
+  // For short bit strings only. Interprets the bits as a number.
+  uint64 ToUInt64();
 
   // Operators.
   bool operator==(const Bitstring& b) const;

@@ -1,6 +1,8 @@
 #include "bit-string.h"
 #include "catch.hpp"
 
+#include <iostream>
+
 TEST_CASE("Empty constructor", "[Bitstring]") {
   Bitstring b;
   REQUIRE(b.Size() == 0);
@@ -33,6 +35,10 @@ TEST_CASE("Copy constructor", "[Bitstring]") {
   REQUIRE(c.Get(0) == true);
   REQUIRE(c.Get(1) == false);
   REQUIRE(c.Get(4) == true);
+  // Check that the copy is a real deep copy.
+  c.Set(1, true);
+  REQUIRE(c.Get(1) == true);
+  REQUIRE(b.Get(1) == false);
 }
 
 TEST_CASE("Set and Get", "[Bitstring]") {
@@ -108,4 +114,31 @@ TEST_CASE("Append a bitstring to another", "[Bitstring]") {
   REQUIRE(a.Get(2) == false);
   REQUIRE(a.Get(3) == true);
   REQUIRE(a.Get(4) == false);
+}
+
+TEST_CASE("Bitstring as number", "[Bitstring]") {
+  Bitstring b;
+  REQUIRE(b.ToUInt64() == 0);
+  b.Append(false);
+  REQUIRE(b.ToUInt64() == 0);
+  b.Append(true);
+  REQUIRE(b.ToUInt64() == 2);
+  b.Append(false);
+  REQUIRE(b.ToUInt64() == 2);
+  b.Append(true);
+  REQUIRE(b.ToUInt64() == 10);
+}
+
+TEST_CASE("Compare zero runs", "[Bitstring]") {
+  REQUIRE(Bitstring() < Bitstring(uint64(1)));
+  REQUIRE(Bitstring(uint64(3)) < Bitstring(uint64(5)));
+  REQUIRE(!(Bitstring() < Bitstring()));
+  REQUIRE(!(Bitstring(uint64(1)) < Bitstring()));
+  REQUIRE(!(Bitstring(uint64(7)) < Bitstring(uint64(4))));
+}
+
+TEST_CASE("Compare strings", "[Bitstring]") {
+  REQUIRE(Bitstring() < Bitstring(false));
+  REQUIRE(Bitstring() < Bitstring(true));
+  REQUIRE(Bitstring(false) < Bitstring(true));
 }
