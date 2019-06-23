@@ -207,9 +207,9 @@ Bitstring operator+(const Bitstring& a, const Bitstring& b) {
 std::ostream& operator<<(std::ostream &out, const Bitstring& b) {
   for (uint64 i = b.Size(); i > 0; --i) {
     if (b.Get(i - 1)) {
-      out << "+";
+      out << "1";
     } else {
-      out << "-";
+      out << "0";
     }
   }
   return out;

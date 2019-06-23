@@ -25,7 +25,8 @@ test-main: test-main.o \
            board.o board-test.o \
            combinator.o combinator-test.o \
            enumerator.o enumerator-test.o \
-           four-tuple.o four-tuple-test.o \
+					 four-tuple.o four-tuple-test.o \
+					 huffman.o huffman-test.o \
            large-solution-buffer.o large-solution-buffer-test.o \
            medium-solution-buffer.o medium-solution-buffer-test.o \
            pawn-cache.o pawn-cache-test.o \
