@@ -26,7 +26,8 @@ class Bitstring {
   // Copy constructor.
   Bitstring(const Bitstring& b);
 
-  // Construct from a string. Useful for short Bitstring literals.
+  // Construct from a string. Useful for short Bitstring literals. Digits are
+  // read in right-to-left order in accordance with math convention.
   Bitstring(const std::string& s);
   Bitstring(const char *s);
 
@@ -48,7 +49,8 @@ class Bitstring {
   // Add some bits from b to the end of this string.
   void Append(const Bitstring& b);
 
-  // Add bits from a human-readable string.
+  // Add bits from a human-readable string. Digits are read in right-to-left
+  // order in accordance with math convention.
   void Append(const std::string& s);
 
   // Interpret one ASCII character as a bit and add it.
@@ -67,7 +69,9 @@ class Bitstring {
   Bitstring& operator+=(const Bitstring& b);
   friend Bitstring operator+(const Bitstring& a, const Bitstring& b);
 
-  // Outputs the Bitstring to a stream as a sequence of + and - characters.
+  // Outputs the Bitstring to a stream as a sequence of 0 and 1 characters.
+  // Note that the digits are printed in right-to-left order so they make
+  // sense according to math conventions.
   friend std::ostream& operator<<(std::ostream &out, const Bitstring& b);
 
  private:

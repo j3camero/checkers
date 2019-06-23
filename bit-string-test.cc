@@ -1,8 +1,6 @@
 #include "bit-string.h"
 #include "catch.hpp"
 
-#include <iostream>
-
 TEST_CASE("Empty constructor", "[Bitstring]") {
   Bitstring b;
   REQUIRE(b.Size() == 0);
@@ -42,11 +40,11 @@ TEST_CASE("Copy constructor", "[Bitstring]") {
 }
 
 TEST_CASE("String constructor", "[Bitstring]") {
-  Bitstring b("01010");
+  Bitstring b("11010");
   REQUIRE(b.Size() == 5);
   REQUIRE(b.Get(0) == false);
   REQUIRE(b.Get(1) == true);
-  REQUIRE(b.Get(4) == false);
+  REQUIRE(b.Get(4) == true);
 
   Bitstring z("");
   REQUIRE(z.Size() == 0);
@@ -55,7 +53,7 @@ TEST_CASE("String constructor", "[Bitstring]") {
   REQUIRE(one.Size() == 1);
   REQUIRE(one.Get(0) == true);
 
-  Bitstring a("F+-tf");
+  Bitstring a("T+-tF");
   REQUIRE(a.Size() == 5);
   REQUIRE(a == b);
 
@@ -183,22 +181,26 @@ TEST_CASE("Compare strings", "[Bitstring]") {
   REQUIRE(Bitstring() < Bitstring(false));
   REQUIRE(Bitstring() < Bitstring(true));
   REQUIRE(Bitstring(false) < Bitstring(true));
+  REQUIRE(Bitstring("110") < Bitstring("111"));
+  REQUIRE(Bitstring("011") < Bitstring("111"));
+  REQUIRE(Bitstring("101011") < Bitstring("101111"));
+  REQUIRE(Bitstring("11") < Bitstring("000"));
 }
 
 TEST_CASE("String equality", "[Bitstring]") {
-  Bitstring b("010");
-  REQUIRE(b == "010");
-  REQUIRE(b != "101");
-  REQUIRE(!(b == "101"));
-  REQUIRE(!(b != "010"));
+  Bitstring b("011");
+  REQUIRE(b == "011");
+  REQUIRE(b != "100");
+  REQUIRE(!(b == "100"));
+  REQUIRE(!(b != "011"));
 }
 
 TEST_CASE("Addition operator", "[Bitstring]") {
-  REQUIRE(Bitstring("0") + Bitstring("1") == Bitstring("01"));
-  REQUIRE(Bitstring("010") + Bitstring("101") == Bitstring("010101"));
-  Bitstring b("101");
+  REQUIRE(Bitstring("0") + Bitstring("1") == Bitstring("10"));
+  REQUIRE(Bitstring("011") + Bitstring("001") == Bitstring("001011"));
+  Bitstring b("011");
   b += Bitstring("01");
-  REQUIRE(b == Bitstring("10101"));
+  REQUIRE(b == Bitstring("01011"));
 }
 
 TEST_CASE("Increment", "[Bitstring]") {
@@ -207,13 +209,13 @@ TEST_CASE("Increment", "[Bitstring]") {
   b.Increment();
   REQUIRE(b == Bitstring("1"));
   b.Increment();
-  REQUIRE(b == Bitstring("01"));
+  REQUIRE(b == Bitstring("10"));
   b.Increment();
   REQUIRE(b == Bitstring("11"));
   b.Increment();
-  REQUIRE(b == Bitstring("001"));
+  REQUIRE(b == Bitstring("100"));
   b.Increment();
   REQUIRE(b == Bitstring("101"));
   b.Increment();
-  REQUIRE(b == Bitstring("011"));
+  REQUIRE(b == Bitstring("110"));
 }

@@ -90,7 +90,8 @@ void Bitstring::Append(const Bitstring& b) {
 }
 
 void Bitstring::Append(const std::string& s) {
-  for (int i = 0; i < s.size(); ++i) {
+  // Process digits in right to left order in accordance with math convention.
+  for (int i = s.size() - 1; i >= 0; --i) {
     char c = s[i];
     Append(c);
   }
@@ -204,8 +205,8 @@ Bitstring operator+(const Bitstring& a, const Bitstring& b) {
 }
 
 std::ostream& operator<<(std::ostream &out, const Bitstring& b) {
-  for (uint64 i = 0; i < b.Size(); ++i) {
-    if (b.Get(i)) {
+  for (uint64 i = b.Size(); i > 0; --i) {
+    if (b.Get(i - 1)) {
       out << "+";
     } else {
       out << "-";
