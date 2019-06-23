@@ -58,6 +58,8 @@ TEST_CASE("String constructor", "[Bitstring]") {
   Bitstring a("F+-tf");
   REQUIRE(a.Size() == 5);
   REQUIRE(a == b);
+
+  REQUIRE(Bitstring("--++-+-") == Bitstring("0011010"));
 }
 
 TEST_CASE("Set and Get", "[Bitstring]") {
@@ -116,6 +118,7 @@ TEST_CASE("Append one bit at a time", "[Bitstring]") {
   REQUIRE(b.Get(0) == true);
   REQUIRE(b.Get(1) == false);
   REQUIRE(b.Get(2) == true);
+  REQUIRE(b == Bitstring("101"));
 }
 
 TEST_CASE("Append a bitstring to another", "[Bitstring]") {
@@ -160,4 +163,20 @@ TEST_CASE("Compare strings", "[Bitstring]") {
   REQUIRE(Bitstring() < Bitstring(false));
   REQUIRE(Bitstring() < Bitstring(true));
   REQUIRE(Bitstring(false) < Bitstring(true));
+}
+
+TEST_CASE("String equality", "[Bitstring]") {
+  Bitstring b("010");
+  REQUIRE(b == "010");
+  REQUIRE(b != "101");
+  REQUIRE(!(b == "101"));
+  REQUIRE(!(b != "010"));
+}
+
+TEST_CASE("Addition operator", "[Bitstring]") {
+  REQUIRE(Bitstring("0") + Bitstring("1") == Bitstring("01"));
+  REQUIRE(Bitstring("010") + Bitstring("101") == Bitstring("010101"));
+  Bitstring b("101");
+  b += Bitstring("01");
+  REQUIRE(b == Bitstring("10101"));
 }

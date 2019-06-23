@@ -166,6 +166,19 @@ bool Bitstring::operator<(const Bitstring& b) const {
   return false;
 }
 
+Bitstring& Bitstring::operator+=(const Bitstring& b) {
+  Append(b);
+  return *this;
+}
+
+Bitstring operator+(const Bitstring& a, const Bitstring& b) {
+  // Make a copy of a.
+  Bitstring c(a);
+  // Append b to the copy.
+  c.Append(b);
+  return c;
+}
+
 std::ostream& operator<<(std::ostream &out, const Bitstring& b) {
   for (uint64 i = 0; i < b.Size(); ++i) {
     if (b.Get(i)) {

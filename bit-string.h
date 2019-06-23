@@ -59,6 +59,8 @@ class Bitstring {
   bool operator==(const Bitstring& b) const;
   bool operator!=(const Bitstring& b) const;
   bool operator<(const Bitstring& b) const;
+  Bitstring& operator+=(const Bitstring& b);
+  friend Bitstring operator+(const Bitstring& a, const Bitstring& b);
 
   // Outputs the Bitstring to a stream as a sequence of + and - characters.
   friend std::ostream& operator<<(std::ostream &out, const Bitstring& b);
