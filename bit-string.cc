@@ -91,9 +91,15 @@ void Bitstring::Append(const std::string& s) {
 void Bitstring::Append(char c) {
   switch (c) {
     case '0':
+    case 'F':
+    case 'f':
+    case '-':
       Append(false);
       break;
     case '1':
+    case 'T':
+    case 't':
+    case '+':
       Append(true);
       break;
   };

@@ -50,6 +50,14 @@ TEST_CASE("String constructor", "[Bitstring]") {
 
   Bitstring z("");
   REQUIRE(z.Size() == 0);
+
+  Bitstring one("1");
+  REQUIRE(one.Size() == 1);
+  REQUIRE(one.Get(0) == true);
+
+  Bitstring a("F+-tf");
+  REQUIRE(a.Size() == 5);
+  REQUIRE(a == b);
 }
 
 TEST_CASE("Set and Get", "[Bitstring]") {
