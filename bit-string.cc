@@ -18,6 +18,14 @@ Bitstring::Bitstring(const Bitstring& b) : size(0) {
   Append(b);
 }
 
+Bitstring::Bitstring(const std::string& s) : size(0) {
+  Append(s);
+}
+
+Bitstring::Bitstring(const char *s) : size(0) {
+  Append(std::string(s));
+}
+
 bool Bitstring::Get(uint64 index) const {
   const int page_index = index / bits_per_page;
   const Page& page = data[page_index];
@@ -71,6 +79,24 @@ void Bitstring::Append(const Bitstring& b) {
     bool bit = b.Get(i);
     Append(bit);
   }
+}
+
+void Bitstring::Append(const std::string& s) {
+  for (int i = 0; i < s.size(); ++i) {
+    char c = s[i];
+    Append(c);
+  }
+}
+
+void Bitstring::Append(char c) {
+  switch (c) {
+    case '0':
+      Append(false);
+      break;
+    case '1':
+      Append(true);
+      break;
+  };
 }
 
 uint64 Bitstring::ToUInt64() {

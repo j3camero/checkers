@@ -26,6 +26,10 @@ class Bitstring {
   // Copy constructor.
   Bitstring(const Bitstring& b);
 
+  // Construct from a string. Useful for short Bitstring literals.
+  Bitstring(const std::string& s);
+  Bitstring(const char *s);
+
   // Set and get individual bits.
   bool Get(uint64 index) const;
   void Set(uint64 index, bool b);
@@ -41,6 +45,12 @@ class Bitstring {
 
   // Add some bits from b to the end of this string.
   void Append(const Bitstring& b);
+
+  // Add bits from a human-readable string.
+  void Append(const std::string& s);
+
+  // Interpret one ASCII character as a bit and add it.
+  void Append(char c);
 
   // For short bit strings only. Interprets the bits as a number.
   uint64 ToUInt64();

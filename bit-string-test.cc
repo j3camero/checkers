@@ -41,6 +41,17 @@ TEST_CASE("Copy constructor", "[Bitstring]") {
   REQUIRE(b.Get(1) == false);
 }
 
+TEST_CASE("String constructor", "[Bitstring]") {
+  Bitstring b("01010");
+  REQUIRE(b.Size() == 5);
+  REQUIRE(b.Get(0) == false);
+  REQUIRE(b.Get(1) == true);
+  REQUIRE(b.Get(4) == false);
+
+  Bitstring z("");
+  REQUIRE(z.Size() == 0);
+}
+
 TEST_CASE("Set and Get", "[Bitstring]") {
   uint64 size = 99;
   Bitstring b(size);
