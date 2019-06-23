@@ -51,6 +51,14 @@ void Bitstring::Set(uint64 index, bool b) {
   }
 }
 
+void Bitstring::Clear(uint64 index) {
+  Set(index, false);
+}
+
+void Bitstring::Flip(uint64 index) {
+  Set(index, !Get(index));
+}
+
 uint64 Bitstring::Size() const {
   return size;
 }
@@ -118,6 +126,22 @@ uint64 Bitstring::ToUInt64() {
     mag *= 2;
   }
   return sum;
+}
+
+void Bitstring::Increment() {
+  bool done = false;
+  for (uint64 i = 0; i < size; ++i) {
+    if (Get(i)) {
+      Clear(i);
+    } else {
+      Set(i);
+      done = true;
+      break;
+    }
+  }
+  if (!done) {
+    Append(true);
+  }
 }
 
 bool Bitstring::operator==(const Bitstring& b) const {

@@ -78,6 +78,26 @@ TEST_CASE("Set and Get", "[Bitstring]") {
   REQUIRE(b.Get(7) == false);
 }
 
+TEST_CASE("Set bits with default argument", "[Bitstring]") {
+  uint64 size = 99;
+  Bitstring b(size);
+  b.Set(7);
+  REQUIRE(b.Get(7) == true);
+}
+
+TEST_CASE("Clear and flip bits", "[Bitstring]") {
+  uint64 size = 99;
+  Bitstring b(size);
+  b.Set(7);
+  REQUIRE(b.Get(7) == true);
+  b.Clear(7);
+  REQUIRE(b.Get(7) == false);
+  b.Flip(7);
+  REQUIRE(b.Get(7) == true);
+  b.Flip(7);
+  REQUIRE(b.Get(7) == false);
+}
+
 TEST_CASE("Resize", "[Bitstring]") {
   Bitstring b;
   b.Resize(9001);
@@ -179,4 +199,21 @@ TEST_CASE("Addition operator", "[Bitstring]") {
   Bitstring b("101");
   b += Bitstring("01");
   REQUIRE(b == Bitstring("10101"));
+}
+
+TEST_CASE("Increment", "[Bitstring]") {
+  // Sometimes the bits are in backwards order.
+  Bitstring b;
+  b.Increment();
+  REQUIRE(b == Bitstring("1"));
+  b.Increment();
+  REQUIRE(b == Bitstring("01"));
+  b.Increment();
+  REQUIRE(b == Bitstring("11"));
+  b.Increment();
+  REQUIRE(b == Bitstring("001"));
+  b.Increment();
+  REQUIRE(b == Bitstring("101"));
+  b.Increment();
+  REQUIRE(b == Bitstring("011"));
 }

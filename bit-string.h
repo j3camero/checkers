@@ -32,7 +32,9 @@ class Bitstring {
 
   // Set and get individual bits.
   bool Get(uint64 index) const;
-  void Set(uint64 index, bool b);
+  void Set(uint64 index, bool b = true);
+  void Clear(uint64 index);
+  void Flip(uint64 index);
 
   // How many bits in this bit string.
   uint64 Size() const;
@@ -54,6 +56,9 @@ class Bitstring {
 
   // For short bit strings only. Interprets the bits as a number.
   uint64 ToUInt64();
+
+  // Binary addition. Adds 1 to the string, treating it like a binary number.
+  void Increment();
 
   // Operators.
   bool operator==(const Bitstring& b) const;
