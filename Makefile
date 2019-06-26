@@ -27,11 +27,9 @@ test-main: test-main.o \
            enumerator.o enumerator-test.o \
 					 four-tuple.o four-tuple-test.o \
 					 huffman.o huffman-test.o \
-           large-solution-buffer.o large-solution-buffer-test.o \
-           medium-solution-buffer.o medium-solution-buffer-test.o \
            pawn-cache.o pawn-cache-test.o \
            seven-tuple.o seven-tuple-test.o \
            six-tuple.o six-tuple-test.o \
-           small-solution-buffer.o small-solution-buffer-test.o \
+           solution.o solution-test.o \
 					 std-test.o \
            string-util.o string-util-test.o
