@@ -52,7 +52,7 @@ TEST_CASE("Write to disk and read back", "[MediumSolutionBuffer]") {
   a.Set(0, Win);
   a.Set(1, Loss);
   a.Set(98, Draw);
-  const string filename("test-solution-buffer.egd");
+  const string filename("test-solution-buffer.end");
   bool write_success = a.Write(filename);
   REQUIRE(write_success);
   MediumSolutionBuffer b(filename);
