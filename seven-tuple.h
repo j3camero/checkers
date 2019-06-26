@@ -3,7 +3,6 @@
 
 #include "six-tuple.h"
 #include "std.h"
-#include "types.h"
 
 // Stores the absolute index of a single checkers position. Has two parts:
 //   - a SixTuple that identifies the endgame database slice, and

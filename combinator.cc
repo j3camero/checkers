@@ -1,7 +1,6 @@
 #include "board.h"
 #include "combinator.h"
 #include "std.h"
-#include "types.h"
 
 vector<uint64> factorial_cache;
 vector<vector<uint64> > choose_cache;

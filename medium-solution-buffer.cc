@@ -1,7 +1,7 @@
 #include "medium-solution-buffer.h"
 #include "small-solution-buffer.h"
+#include "solution.h"
 #include "std.h"
-#include "types.h"
 
 MediumSolutionBuffer::MediumSolutionBuffer(uint64 length)
   : length(length), data(length / 32 + 1) {

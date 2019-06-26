@@ -2,8 +2,8 @@
 #define _MEDIUM_SOLUTION_BUFFER_H_
 
 #include "small-solution-buffer.h"
+#include "solution.h"
 #include "std.h"
-#include "types.h"
 
 // Stores solution values for a block of related game positions.
 class MediumSolutionBuffer {

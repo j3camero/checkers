@@ -2,8 +2,8 @@
 #define _LARGE_SOLUTION_BUFFER_H_
 
 #include "medium-solution-buffer.h"
+#include "solution.h"
 #include "std.h"
-#include "types.h"
 
 // Stores solution values for a block of related game positions.
 //
@@ -21,5 +21,8 @@ class LargeSolutionBuffer {
   uint64 length;
   vector<MediumSolutionBuffer> data;
 };
+
+// A shorter alias for code readability.
+typedef LargeSolutionBuffer SolutionBuffer;
 
 #endif

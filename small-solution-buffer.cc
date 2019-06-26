@@ -1,4 +1,5 @@
 #include "small-solution-buffer.h"
+#include "solution.h"
 
 SmallSolutionBuffer::SmallSolutionBuffer() : data(0) {
   // Body is empty because of initialization list.

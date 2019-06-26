@@ -6,7 +6,6 @@
 #include "pawn-cache.h"
 #include "six-tuple.h"
 #include "std.h"
-#include "types.h"
 
 // Enumerates a set of related checkerboard positions.
 class Enumerator {

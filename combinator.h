@@ -3,7 +3,6 @@
 
 #include "board.h"
 #include "std.h"
-#include "types.h"
 
 uint64 Factorial(unsigned int n);
 uint64 Choose(unsigned int n, unsigned int k);

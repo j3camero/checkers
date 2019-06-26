@@ -3,7 +3,6 @@
 
 #include "six-tuple.h"
 #include "std.h"
-#include "types.h"
 
 // Stores the number of arrangements of white pawns, for each arrangement of
 // black pawns. These numbers are cached to ensure that they are not needlessly

@@ -2,7 +2,6 @@
 #define _BITSTRING_H_
 
 #include "std.h"
-#include "types.h"
 
 // A paging scheme is used to break up the memory allocations.
 const int words_per_page = 1024;

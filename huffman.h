@@ -3,7 +3,6 @@
 
 #include "bit-string.h"
 #include "std.h"
-#include "types.h"
 
 // Calculates the canonical Huffman code given the bit lengths of the symbols.
 vector<Bitstring> CanonicalHuffmanCode(const vector<int>& bit_count);

@@ -1,7 +1,7 @@
 #include "catch.hpp"
-#include "types.h"
+#include "std.h"
 
-TEST_CASE("Bit-shifting and endianness check", "[types]") {
+TEST_CASE("Bit-shifting and endianness check", "[std]") {
   const uint64 eight = 8;
   REQUIRE((eight << 1) == 16);
   REQUIRE((eight >> 1) == 4);

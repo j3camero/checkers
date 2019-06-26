@@ -2,7 +2,6 @@
 #include "catch.hpp"
 #include "huffman.h"
 #include "std.h"
-#include "types.h"
 
 TEST_CASE("Canonical Huffman codes, minimal cases", "[Huffman]") {
   vector<int> bit_count;

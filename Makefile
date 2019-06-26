@@ -33,5 +33,5 @@ test-main: test-main.o \
            seven-tuple.o seven-tuple-test.o \
            six-tuple.o six-tuple-test.o \
            small-solution-buffer.o small-solution-buffer-test.o \
-           string-util.o string-util-test.o \
-					 types-test.o
+					 std-test.o \
+           string-util.o string-util-test.o

@@ -1,7 +1,8 @@
 #ifndef _SMALL_SOLUTION_BUFFER_H_
 #define _SMALL_SOLUTION_BUFFER_H_
 
-#include "types.h"
+#include "solution.h"
+#include "std.h"
 
 // Stores 32 solution values using a 64-bit integer (2 bits per value).
 class SmallSolutionBuffer {

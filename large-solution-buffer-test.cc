@@ -64,3 +64,9 @@ TEST_CASE("LargeSolutionBuffer huge example", "[LargeSolutionBuffer]") {
   REQUIRE(b.Get(999999997) == Unknown);
   REQUIRE(b.Get(999999998) == Draw);
 }
+
+TEST_CASE("LargeSolutionBuffer typedef / alias", "[LargeSolutionBuffer]") {
+  // Optional shorter type name to use for code readability.
+  SolutionBuffer b(7);
+  REQUIRE(b.Length() == 7);
+}

@@ -4,7 +4,6 @@
 #include "pawn-cache.h"
 #include "six-tuple.h"
 #include "std.h"
-#include "types.h"
 
 Enumerator::Enumerator(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp)
   // Initializer list.

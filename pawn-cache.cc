@@ -2,7 +2,6 @@
 #include "pawn-cache.h"
 #include "six-tuple.h"
 #include "std.h"
-#include "types.h"
 
 PawnCache::PawnCache(const SixTuple& db) {
   // Calculate the available squares for black pawns.

@@ -6,9 +6,12 @@
 #include <iostream>
 #include <map>
 #include <set>
+#include <stdint.h>
 #include <string>
 #include <vector>
 
 using namespace std;
+
+typedef uint64_t uint64;
 
 #endif
