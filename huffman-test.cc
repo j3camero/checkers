@@ -1,6 +1,11 @@
 #include "huffman.h"
 #include "catch.hpp"
 
+#include <vector>
+
+#include "bit-string.h"
+#include "types.h"
+
 TEST_CASE("Canonical Huffman codes, minimal cases", "[Huffman]") {
   std::vector<int> bit_count;
   const std::vector<Bitstring> zero = CanonicalHuffmanCode(bit_count);
@@ -40,12 +45,27 @@ TEST_CASE("Canonical Huffman codes, medium example", "[Huffman]") {
   REQUIRE(code[3] == Bitstring("00110"));
 }
 
+TEST_CASE("Package with zero coins. Empty package.", "[Huffman]") {
+  Package p;
+  REQUIRE(p.value == 0);
+  REQUIRE(p.bit_count.size() == 0);
+}
+
 TEST_CASE("Package with just one coin. ie: one coin", "[Huffman]") {
   Package p(1234, 7);
   REQUIRE(p.value == 1234);
   REQUIRE(p.bit_count[0] == 0);
   REQUIRE(p.bit_count[6] == 0);
   REQUIRE(p.bit_count[7] == 1);
+}
+
+TEST_CASE("Package copy constructor", "[Huffman]") {
+  Package p(1234, 7);
+  Package c(p);
+  REQUIRE(c.value == 1234);
+  REQUIRE(c.bit_count[0] == 0);
+  REQUIRE(c.bit_count[6] == 0);
+  REQUIRE(c.bit_count[7] == 1);
 }
 
 TEST_CASE("Merge two packages", "[Huffman]") {
@@ -94,5 +114,26 @@ TEST_CASE("Merge 42 packages", "[Huffman]") {
   REQUIRE(p.bit_count[5] == 4);
   REQUIRE(p.bit_count[6] == 4);
   REQUIRE(p.bit_count[7] == 5);
+  REQUIRE(p.bit_count[8] == 4);
+}
+
+TEST_CASE("Merge list of packages", "[Huffman]") {
+  std::vector<Package> v;
+  v.push_back(Package(7, 3));
+  for (int i = 0; i < 41; ++i) {
+    uint64 value = i;
+    int symbol = i % 9;
+    v.push_back(Package(value, symbol));
+  }
+  Package p(v);
+  REQUIRE(p.value == 827);
+  REQUIRE(p.bit_count[0] == 5);
+  REQUIRE(p.bit_count[1] == 5);
+  REQUIRE(p.bit_count[2] == 5);
+  REQUIRE(p.bit_count[3] == 6);
+  REQUIRE(p.bit_count[4] == 5);
+  REQUIRE(p.bit_count[5] == 4);
+  REQUIRE(p.bit_count[6] == 4);
+  REQUIRE(p.bit_count[7] == 4);
   REQUIRE(p.bit_count[8] == 4);
 }

@@ -18,11 +18,20 @@ std::vector<Bitstring> LengthLimitedHuffmanCode(
 // Helper class for implementing the package-merge algorithm.
 class Package {
  public:
+  // Initialize an empty package with zero coins in it.
+  Package();
+
   // Initialize a package with one coin in it.
   Package(uint64 value, int symbol);
 
+  // Copy constructor.
+  Package(const Package& p);
+
   // Merge two packages. Sum their values and bit counts.
   Package(const Package& a, const Package& b);
+
+  // Merge a list of packages into one. Sum their values and bit counts.
+  Package(const std::vector<Package>& p);
 
   // The total numismatic value of this package of coins.
   uint64 value;
