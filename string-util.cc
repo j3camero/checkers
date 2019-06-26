@@ -1,11 +1,9 @@
+#include "std.h"
 #include "string-util.h"
 
-#include <string>
-#include <vector>
-
-std::vector<std::string> StringUtil::Split(const std::string& s, char delim) {
-  std::vector<std::string> tokens;
-  std::string token;
+vector<string> StringUtil::Split(const string& s, char delim) {
+  vector<string> tokens;
+  string token;
   for (int i = 0; i < s.size(); ++i) {
     if (s[i] == delim) {
       tokens.push_back(token);

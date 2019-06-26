@@ -1,6 +1,5 @@
 #include "four-tuple.h"
-
-#include <fstream>
+#include "std.h"
 
 FourTuple::FourTuple(int nbk, int nwk, int nbp, int nwp)
   : nbk(nbk), nwk(nwk), nbp(nbp), nwp(nwp) {
@@ -43,7 +42,7 @@ bool FourTuple::operator<(const FourTuple& other) const {
   return false;
 }
 
-std::ostream& operator<<(std::ostream &out, const FourTuple& p) {
+ostream& operator<<(ostream &out, const FourTuple& p) {
   out << p.nwk << p.nbk << p.nbp << p.nwp;
   return out;
 }

@@ -1,12 +1,9 @@
 #include "board.h"
-
-#include <set>
-#include <vector>
-
 #include "combinator.h"
 #include "pawn-cache.h"
 #include "seven-tuple.h"
 #include "six-tuple.h"
+#include "std.h"
 
 // The way the spaces on the checkerboard are ordered on a printed page.
 const int human_readable_ordering[] = {
@@ -63,7 +60,7 @@ Board::Board(const Board& b) {
   }
 }
 
-Board::Board(const std::string& s) {
+Board::Board(const string& s) {
   int pieces_found = 0;
   for (int i = 0; i < s.length(); ++i) {
     char c = s[i];
@@ -265,7 +262,7 @@ void Board::Deindex(const SixTuple& db, uint64 index) {
   pc.DecomposeIndex(bkr, &bp_index, &wp_index);
   // Place black pawns.
   const int bp_avail = 4 * (db.rbp + 1);
-  std::vector<int> sq;
+  vector<int> sq;
   for (int i = bp_avail - 1; i >= 0; --i) {
     sq.push_back(i);
   }
@@ -426,16 +423,16 @@ bool Board::IsWhite(Piece p) {
   };
 }
 
-bool Board::PawnCaptures(int from, std::set<SevenTuple>* captures) {
+bool Board::PawnCaptures(int from, set<SevenTuple>* captures) {
   return GenerateCaptures(from, 2, captures);
 }
 
-bool Board::KingCaptures(int from, std::set<SevenTuple>* captures) {
+bool Board::KingCaptures(int from, set<SevenTuple>* captures) {
   return GenerateCaptures(from, 4, captures);
 }
 
 bool Board::ConversionMoves(
-  int from, std::vector<uint64>* moves, SixTuple* db) {
+  int from, vector<uint64>* moves, SixTuple* db) {
   for (int direction = 0; direction < 2; ++direction) {
     const int to = move_offsets[from][direction];
     if (to < 0 || pieces[to] != Empty) {
@@ -459,7 +456,7 @@ bool Board::ConversionMoves(
 }
 
 bool Board::NonConversionMoves(
-  int from, int max_direction, std::vector<uint64>* moves) {
+  int from, int max_direction, vector<uint64>* moves) {
   const SixTuple db = WhichDatabaseSlice();
   for (int direction = 0; direction < max_direction; ++direction) {
     const int to = move_offsets[from][direction];
@@ -481,7 +478,7 @@ bool Board::NonConversionMoves(
 
 bool Board::GenerateCaptures(int from,
                              int max_direction,
-                             std::set<SevenTuple>* captures) {
+                             set<SevenTuple>* captures) {
   bool found_jumps = false;
   const Piece moving_piece = pieces[from];
   for (int direction = 0; direction < max_direction; ++direction) {
@@ -509,11 +506,11 @@ bool Board::GenerateCaptures(int from,
   return found_jumps;
 }
 
-bool Board::PawnMoves(int from, std::vector<uint64>* moves) {
+bool Board::PawnMoves(int from, vector<uint64>* moves) {
   return NonConversionMoves(from, 2, moves);
 }
 
-bool Board::KingMoves(int from, std::vector<uint64>* moves) {
+bool Board::KingMoves(int from, vector<uint64>* moves) {
   return NonConversionMoves(from, 4, moves);
 }
 
@@ -544,20 +541,20 @@ bool Board::operator!=(const Board& other) const {
 }
 
 // This is the Board's << operator for stream-style output. It's a friend.
-std::ostream& operator<<(std::ostream &out, const Board& board) {
+ostream& operator<<(ostream &out, const Board& board) {
     out << board.HumanReadable();
     return out;
 }
 
-std::string Board::HumanReadable() const {
-  std::string res;
+string Board::HumanReadable() const {
+  string res;
   for (int i = 0; i < 32; ++i) {
     if (i % 8 == 0) {
       res += "  ";
     }
     const int square = human_readable_ordering[i];
     const int value = (int)pieces[square];
-    res += " " + std::string(1, human_readable_chars[value]) + " ";
+    res += " " + string(1, human_readable_chars[value]) + " ";
     if (i % 4 == 3) {
       res += "\n";
     }

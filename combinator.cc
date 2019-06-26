@@ -1,12 +1,10 @@
-#include "combinator.h"
-
-#include <vector>
-
 #include "board.h"
+#include "combinator.h"
+#include "std.h"
 #include "types.h"
 
-std::vector<uint64> factorial_cache;
-std::vector<std::vector<uint64> > choose_cache;
+vector<uint64> factorial_cache;
+vector<vector<uint64> > choose_cache;
 
 // Precompute factorials and binomial coefficients. This function should be
 // run before any calls to Factorial(n) or Choose(n,k).
@@ -23,7 +21,7 @@ bool DoCombinatorPrecomputations() {
   // for small n and k.
   const int max_choose = 50;
   for (int n = 0; n < max_choose; ++n) {
-    choose_cache.push_back(std::vector<uint64>(n + 1, 1));
+    choose_cache.push_back(vector<uint64>(n + 1, 1));
     for (int k = 1; k < n; ++k) {
       choose_cache[n][k] = choose_cache[n - 1][k - 1] + choose_cache[n - 1][k];
     }
@@ -74,7 +72,7 @@ bool Combinator::Increment() {
   return Increment(NULL, NULL);
 }
 
-bool Combinator::Increment(const std::vector<int>* permutation_vector,
+bool Combinator::Increment(const vector<int>* permutation_vector,
                            Board* board_to_update) {
   ++index;
   int i = k - 1;
@@ -115,7 +113,7 @@ bool Combinator::Increment(uint64 count) {
 }
 
 bool Combinator::Increment(uint64 count,
-                           const std::vector<int>* permutation_vector,
+                           const vector<int>* permutation_vector,
                            Board* board_to_update) {
   bool any_true = false;
   while (count > 0) {
@@ -139,7 +137,7 @@ void Combinator::Deindex(const uint64 new_index) {
 
 void Combinator::Deindex(const uint64 new_index,
                          Piece piece,
-                         const std::vector<int>* permutation_vector,
+                         const vector<int>* permutation_vector,
                          Board* board_to_update) {
   if (new_index >= Choose(n, k)) {
     throw "Index is too large.";
@@ -186,7 +184,7 @@ bool Combinator::operator!=(const Combinator& other) const {
 }
 
 // This is the Combinator's << operator for stream-style output. It's a friend.
-std::ostream& operator<<(std::ostream &out, const Combinator& c) {
+ostream& operator<<(ostream &out, const Combinator& c) {
     out << "Combinator(" << c.GetN() << "," << c.GetK() << ") index: "
         << c.Index() << " counters: [";
     for (int i = 0; i < c.GetK(); ++i) {

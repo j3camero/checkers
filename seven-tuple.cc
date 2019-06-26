@@ -1,6 +1,5 @@
 #include "seven-tuple.h"
-
-#include <iostream>
+#include "std.h"
 
 SevenTuple::SevenTuple(const SixTuple& db, uint64 index)
   : db(db), index(index) {
@@ -36,7 +35,7 @@ bool SevenTuple::operator<(const SevenTuple& other) const {
   return false;
 }
 
-std::ostream& operator<<(std::ostream &out, const SevenTuple& s) {
+ostream& operator<<(ostream &out, const SevenTuple& s) {
   out << s.db << ":" << s.index;
   return out;
 }

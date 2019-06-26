@@ -1,6 +1,7 @@
 #include "board.h"
 #include "catch.hpp"
 #include "combinator.h"
+#include "std.h"
 
 TEST_CASE("Factorial", "[Combinator]") {
   REQUIRE(Factorial(0) == 1);
@@ -110,7 +111,7 @@ TEST_CASE("Multiple overflows", "[Combinator]") {
 
 TEST_CASE("Move 1 piece on a checkerboard, no permutation", "[Combinator]") {
   // Use a trivial permutation 0->0, 1->1, and 2->2.
-  std::vector<int> permutation;
+  vector<int> permutation;
   permutation.push_back(0);
   permutation.push_back(1);
   permutation.push_back(2);
@@ -153,7 +154,7 @@ TEST_CASE("Move 1 piece on a checkerboard, no permutation", "[Combinator]") {
 }
 
 TEST_CASE("Two checkers dance on a checkerboard together", "[Combinator]") {
-  std::vector<int> permutation;
+  vector<int> permutation;
   // Three diagonally connected squares.
   permutation.push_back(22);
   permutation.push_back(18);
@@ -197,7 +198,7 @@ TEST_CASE("Two checkers dance on a checkerboard together", "[Combinator]") {
 }
 
 TEST_CASE("Move 3 pieces on a checkerboard with permutation", "[Combinator]") {
-  std::vector<int> permutation;
+  vector<int> permutation;
   // The first 4 ranks in reverse order.
   for (int i = 15; i >= 0; --i) {
     permutation.push_back(i);
@@ -263,7 +264,7 @@ TEST_CASE("Deindex and place pieces onto a board", "[Combinator]") {
   Combinator c(8, 3);
   Board b;
   int p[] = {18, 16, 14, 12, 10, 8, 6, 4};
-  std::vector<int> permutation_vector(p, p + sizeof(p) / sizeof(p[0]));
+  vector<int> permutation_vector(p, p + sizeof(p) / sizeof(p[0]));
   c.Deindex(1, BlackKing, &permutation_vector, &b);
   REQUIRE(b == Board("   -   -   -   - "
                      " -   -   -   -   "

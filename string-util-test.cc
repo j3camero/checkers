@@ -1,8 +1,9 @@
 #include "catch.hpp"
+#include "std.h"
 #include "string-util.h"
 
 TEST_CASE("String split three items", "[StringUtil]") {
-  std::vector<std::string> tokens = StringUtil::Split("one,two,three", ',');
+  vector<string> tokens = StringUtil::Split("one,two,three", ',');
   REQUIRE(tokens.size() == 3);
   REQUIRE(tokens[0] == "one");
   REQUIRE(tokens[1] == "two");
@@ -10,7 +11,7 @@ TEST_CASE("String split three items", "[StringUtil]") {
 }
 
 TEST_CASE("String split change delimiter", "[StringUtil]") {
-  std::vector<std::string> tokens = StringUtil::Split("one|two| ,", '|');
+  vector<string> tokens = StringUtil::Split("one|two| ,", '|');
   REQUIRE(tokens.size() == 3);
   REQUIRE(tokens[0] == "one");
   REQUIRE(tokens[1] == "two");
@@ -18,13 +19,13 @@ TEST_CASE("String split change delimiter", "[StringUtil]") {
 }
 
 TEST_CASE("String split with only one item", "[StringUtil]") {
-  std::vector<std::string> tokens = StringUtil::Split("word", ',');
+  vector<string> tokens = StringUtil::Split("word", ',');
   REQUIRE(tokens.size() == 1);
   REQUIRE(tokens[0] == "word");
 }
 
 TEST_CASE("String split with empty items", "[StringUtil]") {
-  std::vector<std::string> tokens = StringUtil::Split(",,", ',');
+  vector<string> tokens = StringUtil::Split(",,", ',');
   REQUIRE(tokens.size() == 3);
   REQUIRE(tokens[0] == "");
   REQUIRE(tokens[1] == "");
@@ -32,7 +33,7 @@ TEST_CASE("String split with empty items", "[StringUtil]") {
 }
 
 TEST_CASE("String split empty string", "[StringUtil]") {
-  std::vector<std::string> tokens = StringUtil::Split("", ',');
+  vector<string> tokens = StringUtil::Split("", ',');
   REQUIRE(tokens.size() == 1);
   REQUIRE(tokens[0] == "");
 }

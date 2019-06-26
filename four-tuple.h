@@ -1,7 +1,7 @@
 #ifndef _FOUR_TUPLE_H_
 #define _FOUR_TUPLE_H_
 
-#include <fstream>
+#include "std.h"
 
 // A 4-tuple of integers. One for each piece type.
 //   nbk - the number of black kings.
@@ -29,7 +29,7 @@ class FourTuple {
 
   // Outputs as a 4-character string of digits with no newline, in the order:
   // "nbk nwk nbp nwp" as described in Lake (1994).
-  friend std::ostream& operator<<(std::ostream &out, const FourTuple& e);
+  friend ostream& operator<<(ostream &out, const FourTuple& e);
 
   // These variables are exposed as public. The usual OOP convention is to have
   // these be private and expose get and set functions instead. However, these

@@ -1,16 +1,13 @@
 #include "medium-solution-buffer.h"
-
-#include <fstream>
-#include <vector>
-
 #include "small-solution-buffer.h"
+#include "std.h"
 #include "types.h"
 
 MediumSolutionBuffer::MediumSolutionBuffer(uint64 length)
   : length(length), data(length / 32 + 1) {
 }
 
-MediumSolutionBuffer::MediumSolutionBuffer(const std::string& filename) {
+MediumSolutionBuffer::MediumSolutionBuffer(const string& filename) {
   bool success = Read(filename);
   if (!success) {
     throw "Failed to read from file.";
@@ -35,8 +32,8 @@ uint64 MediumSolutionBuffer::Length() {
   return length;
 }
 
-bool MediumSolutionBuffer::Write(const std::string& filename) const {
-  std::ofstream file(filename.c_str(), std::ios::out | std::ios::binary);
+bool MediumSolutionBuffer::Write(const string& filename) const {
+  ofstream file(filename.c_str(), ios::out | ios::binary);
   const uint64 version = 1;
   file.write((char*)&version, sizeof version);
   file.write((char*)&length, sizeof length);
@@ -47,8 +44,8 @@ bool MediumSolutionBuffer::Write(const std::string& filename) const {
   return true;
 }
 
-bool MediumSolutionBuffer::Read(const std::string& filename) {
-  std::ifstream file(filename.c_str(), std::ios::in | std::ios::binary);
+bool MediumSolutionBuffer::Read(const string& filename) {
+  ifstream file(filename.c_str(), ios::in | ios::binary);
   uint64 version;
   file.read((char*)&version, sizeof version);
   file.read((char*)&length, sizeof length);

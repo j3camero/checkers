@@ -1,9 +1,8 @@
 #ifndef _PAWN_CACHE_H_
 #define _PAWN_CACHE_H_
 
-#include <vector>
-
 #include "six-tuple.h"
+#include "std.h"
 #include "types.h"
 
 // Stores the number of arrangements of white pawns, for each arrangement of
@@ -52,8 +51,8 @@ class PawnCache {
     const uint64 index, uint64* bp_index, uint64* wp_index) const;
 
  private:
-  std::vector<uint64> num_wp;
-  std::vector<uint64> sum_wp;
+  vector<uint64> num_wp;
+  vector<uint64> sum_wp;
   uint64 max_wp;
 };
 

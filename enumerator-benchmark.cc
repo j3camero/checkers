@@ -5,26 +5,27 @@
 //
 //   time ./enumerator-benchmark
 #include "enumerator.h"
+#include "std.h"
 
 int main(int argc, char **argv) {
   if (argc != 2) {
-    std::cout << "USAGE: time ./enumerator-benchmark 3212.66" << std::endl
+    cout << "USAGE: time ./enumerator-benchmark 3212.66" << endl
               << "Any database slice of the form ABCD.EF can be specified. "
-              << "For more information, see Lake (1994)." << std::endl;
+              << "For more information, see Lake (1994)." << endl;
     return 1;
   }
-  std::string db_string(argv[1]);
+  string db_string(argv[1]);
   SixTuple db = SixTuple::ParseOrDie(db_string);
   Enumerator e(db);
   const uint64 n = e.NumPositions();
-  std::cout << "Starting with position 0:" << std::endl << e << std::endl
-            << "Enumerating " << n << " positions..." << std::endl;
+  cout << "Starting with position 0:" << endl << e << endl
+            << "Enumerating " << n << " positions..." << endl;
   e.Increment(n - 1);
-  std::cout << "Last position:" << std::endl << e << std::endl;
+  cout << "Last position:" << endl << e << endl;
   if (!e.Increment()) {
-    std::cerr << "Enumerator failed to overflow." << std::endl;
+    cerr << "Enumerator failed to overflow." << endl;
     return 1;
   }
-  std::cout << "Done." << std::endl;
+  cout << "Done." << endl;
   return 0;
 }

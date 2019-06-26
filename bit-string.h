@@ -1,15 +1,13 @@
 #ifndef _BITSTRING_H_
 #define _BITSTRING_H_
 
-#include <string>
-#include <vector>
-
+#include "std.h"
 #include "types.h"
 
 // A paging scheme is used to break up the memory allocations.
 const int words_per_page = 1024;
 const int bits_per_page = words_per_page * 64;
-typedef std::vector<uint64> Page;
+typedef vector<uint64> Page;
 
 // A string of bits.
 class Bitstring {
@@ -28,7 +26,7 @@ class Bitstring {
 
   // Construct from a string. Useful for short Bitstring literals. Digits are
   // read in right-to-left order in accordance with math convention.
-  Bitstring(const std::string& s);
+  Bitstring(const string& s);
   Bitstring(const char *s);
 
   // Set and get individual bits.
@@ -51,7 +49,7 @@ class Bitstring {
 
   // Add bits from a human-readable string. Digits are read in right-to-left
   // order in accordance with math convention.
-  void Append(const std::string& s);
+  void Append(const string& s);
 
   // Interpret one ASCII character as a bit and add it.
   void Append(char c);
@@ -72,11 +70,11 @@ class Bitstring {
   // Outputs the Bitstring to a stream as a sequence of 0 and 1 characters.
   // Note that the digits are printed in right-to-left order so they make
   // sense according to math conventions.
-  friend std::ostream& operator<<(std::ostream &out, const Bitstring& b);
+  friend ostream& operator<<(ostream &out, const Bitstring& b);
 
  private:
   // Store data as "list of lists" to break up the memory allocations.
-  std::vector<Page> data;
+  vector<Page> data;
 
   // The size of the bit string, in bits.
   uint64 size;

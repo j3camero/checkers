@@ -1,12 +1,9 @@
-#include "enumerator.h"
-
-#include <fstream>
-#include <vector>
-
 #include "board.h"
 #include "combinator.h"
+#include "enumerator.h"
 #include "pawn-cache.h"
 #include "six-tuple.h"
+#include "std.h"
 #include "types.h"
 
 Enumerator::Enumerator(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp)
@@ -188,10 +185,10 @@ bool Enumerator::operator!=(const Board& b) const {
   return !(*this == b);
 }
 
-std::ostream& operator<<(std::ostream &out, const Enumerator& e) {
-  out << "Enumerator(" << e.db << ") index: " << e.Index() << std::endl
-      << "bp: " << e.bp << std::endl << "wp: " << (*e.wp) << std::endl
-      << "bk: " << e.bk << std::endl << "wk: " << e.wk << std::endl << e.board;
+ostream& operator<<(ostream &out, const Enumerator& e) {
+  out << "Enumerator(" << e.db << ") index: " << e.Index() << endl
+      << "bp: " << e.bp << endl << "wp: " << (*e.wp) << endl
+      << "bk: " << e.bk << endl << "wk: " << e.wk << endl << e.board;
   return out;
 }
 

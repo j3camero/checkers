@@ -1,5 +1,4 @@
 #include "catch.hpp"
-
 #include "types.h"
 
 TEST_CASE("Bit-shifting and endianness check", "[types]") {

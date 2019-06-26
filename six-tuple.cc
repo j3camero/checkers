@@ -1,5 +1,5 @@
 #include "six-tuple.h"
-
+#include "std.h"
 #include "string-util.h"
 
 SixTuple::SixTuple(int nbk, int nwk, int nbp, int nwp, int rbp, int rwp)
@@ -23,7 +23,7 @@ SixTuple SixTuple::Mirror() const {
   return SixTuple(nwk, nbk, nwp, nbp, rwp, rbp);
 }
 
-bool SixTuple::Parse(const std::string& s) {
+bool SixTuple::Parse(const string& s) {
   if (s.size() != 7) {
     return false;
   }
@@ -41,7 +41,7 @@ bool SixTuple::Parse(const std::string& s) {
   return true;
 }
 
-SixTuple SixTuple::ParseOrDie(const std::string& s) {
+SixTuple SixTuple::ParseOrDie(const string& s) {
   SixTuple t;
   if (!t.Parse(s)) {
     throw "Invalid SixTuple or database slice identifier.";
@@ -75,7 +75,7 @@ bool SixTuple::operator<(const SixTuple& other) const {
   return false;
 }
 
-std::ostream& operator<<(std::ostream &out, const SixTuple& p) {
+ostream& operator<<(ostream &out, const SixTuple& p) {
   out << p.nwk << p.nbk << p.nbp << p.nwp << "." << p.rbp << p.rwp;
   return out;
 }

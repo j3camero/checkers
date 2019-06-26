@@ -1,17 +1,16 @@
 #ifndef _HUFFMAN_H_
 #define _HUFFMAN_H_
 
-#include <vector>
-
 #include "bit-string.h"
+#include "std.h"
 #include "types.h"
 
 // Calculates the canonical Huffman code given the bit lengths of the symbols.
-std::vector<Bitstring> CanonicalHuffmanCode(const std::vector<int>& bit_count);
+vector<Bitstring> CanonicalHuffmanCode(const vector<int>& bit_count);
 
 // Calculates a set of Huffman codes with a maximum length.
-std::vector<Bitstring> LengthLimitedHuffmanCode(
-  const std::vector<uint64>& freq,
+vector<Bitstring> LengthLimitedHuffmanCode(
+  const vector<uint64>& freq,
   int max_length
 );
 
@@ -31,7 +30,7 @@ class Package {
   Package(const Package& a, const Package& b);
 
   // Merge a list of packages into one. Sum their values and bit counts.
-  Package(const std::vector<Package>& p);
+  Package(const vector<Package>& p);
 
   // Comparison operator. Sorts by numismatic value.
   bool operator<(const Package& p) const;
@@ -40,7 +39,7 @@ class Package {
   uint64 value;
 
   // The number of bits to use to encode each symbol.
-  std::vector<int> bit_count;
+  vector<int> bit_count;
 };
 
 #endif

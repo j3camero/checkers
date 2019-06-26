@@ -1,15 +1,12 @@
-#include "pawn-cache.h"
-
-#include <map>
-#include <vector>
-
 #include "combinator.h"
+#include "pawn-cache.h"
 #include "six-tuple.h"
+#include "std.h"
 #include "types.h"
 
 PawnCache::PawnCache(const SixTuple& db) {
   // Calculate the available squares for black pawns.
-  std::vector<int> bp_squares;
+  vector<int> bp_squares;
   for (int i = 4 * db.rbp + 3; i >= 0; --i) {
     bp_squares.push_back(i);
   }
@@ -54,7 +51,7 @@ PawnCache::PawnCache(const SixTuple& db) {
 }
 
 // This comparison operator imposes a strict ordering on the six-tuples, as
-// required by std::map. It considers only nbp, nwp, rbp, and rwp - ignoring
+// required by map. It considers only nbp, nwp, rbp, and rwp - ignoring
 // nbk and nwk since only the pawns are relevant here. Records for different
 // values of nbk and nwk would have the same values anyway, so the cache gains
 // effectiveness by ignoring the kings.
@@ -73,14 +70,14 @@ struct PawnCacheCompare {
 };
 
 // This is the global in-memory pawn cache.
-std::map<SixTuple, PawnCache, PawnCacheCompare> cache;
+map<SixTuple, PawnCache, PawnCacheCompare> cache;
 
 const PawnCache& PawnCache::Get(const SixTuple& db) {
-  std::map<SixTuple, PawnCache, PawnCacheCompare>::iterator it = cache.find(db);
+  map<SixTuple, PawnCache, PawnCacheCompare>::iterator it = cache.find(db);
   if (it == cache.end()) {
     // No entry was found in the cache. Create it. This is the expensive
     // calculation that that pawn cache is designed to avoid.
-    cache.insert(std::pair<SixTuple, PawnCache>(db, PawnCache(db)));
+    cache.insert(pair<SixTuple, PawnCache>(db, PawnCache(db)));
   }
   return cache.find(db)->second;
 }

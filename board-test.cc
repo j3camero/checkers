@@ -1,11 +1,8 @@
 #include "board.h"
 #include "catch.hpp"
-
-#include <set>
-#include <vector>
-
 #include "seven-tuple.h"
 #include "six-tuple.h"
+#include "std.h"
 
 TEST_CASE("Get and Set", "[Board]") {
   Board b;
@@ -952,7 +949,7 @@ TEST_CASE("Pawn move generation (non-converting).", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE(b.PawnMoves(10));
-  std::vector<uint64> moves;
+  vector<uint64> moves;
   REQUIRE(b.PawnMoves(10, &moves));
   REQUIRE(moves.size() == 2);
   SixTuple db = b.WhichDatabaseSlice();
@@ -988,7 +985,7 @@ TEST_CASE("Pawn move edge of board.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE(b.PawnMoves(15));
-  std::vector<uint64> moves;
+  vector<uint64> moves;
   REQUIRE(b.PawnMoves(15, &moves));
   REQUIRE(moves.size() == 1);
   SixTuple db = b.WhichDatabaseSlice();
@@ -1014,7 +1011,7 @@ TEST_CASE("Pawn move blocked by another piece.", "[Board]") {
           "   -   -   b   - "
           " -   -   b   -   ");
   REQUIRE(b.PawnMoves(14));
-  std::vector<uint64> moves;
+  vector<uint64> moves;
   REQUIRE(b.PawnMoves(14, &moves));
   REQUIRE(moves.size() == 1);
   SixTuple db = b.WhichDatabaseSlice();
@@ -1040,7 +1037,7 @@ TEST_CASE("Pawn move blocked completely.", "[Board]") {
           "   -   -   b   - "
           " -   -   b   -   ");
   REQUIRE_FALSE(b.PawnMoves(15));
-  std::vector<uint64> moves;
+  vector<uint64> moves;
   REQUIRE_FALSE(b.PawnMoves(15, &moves));
   REQUIRE(moves.size() == 0);
 }
@@ -1055,7 +1052,7 @@ TEST_CASE("Pawn conversion.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE(b.ConversionMoves(21));
-  std::vector<uint64> moves;
+  vector<uint64> moves;
   SixTuple db;
   REQUIRE(b.ConversionMoves(21, &moves, &db));
   REQUIRE(moves.size() == 2);
@@ -1092,7 +1089,7 @@ TEST_CASE("Pawn conversion edge of board.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE(b.ConversionMoves(23));
-  std::vector<uint64> moves;
+  vector<uint64> moves;
   SixTuple db;
   REQUIRE(b.ConversionMoves(23, &moves, &db));
   REQUIRE(moves.size() == 1);
@@ -1119,7 +1116,7 @@ TEST_CASE("Pawn conversion blocked by another piece.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE(b.ConversionMoves(20));
-  std::vector<uint64> moves;
+  vector<uint64> moves;
   SixTuple db;
   REQUIRE(b.ConversionMoves(20, &moves, &db));
   REQUIRE(moves.size() == 1);
@@ -1146,7 +1143,7 @@ TEST_CASE("Pawn conversion blocked completely.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE_FALSE(b.ConversionMoves(23));
-  std::vector<uint64> moves;
+  vector<uint64> moves;
   SixTuple db;
   REQUIRE_FALSE(b.ConversionMoves(23, &moves, &db));
   REQUIRE(moves.size() == 0);
@@ -1162,7 +1159,7 @@ TEST_CASE("Pawn conversion promote to king.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE(b.ConversionMoves(24));
-  std::vector<uint64> moves;
+  vector<uint64> moves;
   SixTuple db;
   REQUIRE(b.ConversionMoves(24, &moves, &db));
   REQUIRE(moves.size() == 1);
@@ -1189,7 +1186,7 @@ TEST_CASE("King move generation.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE(b.KingMoves(10));
-  std::vector<uint64> moves;
+  vector<uint64> moves;
   REQUIRE(b.KingMoves(10, &moves));
   REQUIRE(moves.size() == 4);
   SixTuple db = b.WhichDatabaseSlice();
@@ -1235,7 +1232,7 @@ TEST_CASE("King move edge of board.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE(b.KingMoves(31));
-  std::vector<uint64> moves;
+  vector<uint64> moves;
   REQUIRE(b.KingMoves(31, &moves));
   REQUIRE(moves.size() == 1);
   SixTuple db = b.WhichDatabaseSlice();
@@ -1261,7 +1258,7 @@ TEST_CASE("King move blocked by another piece.", "[Board]") {
           "   -   -   b   - "
           " -   -   b   -   ");
   REQUIRE(b.KingMoves(21));
-  std::vector<uint64> moves;
+  vector<uint64> moves;
   REQUIRE(b.KingMoves(21, &moves));
   REQUIRE(moves.size() == 2);
 }
@@ -1276,7 +1273,7 @@ TEST_CASE("King move blocked completely.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE_FALSE(b.KingMoves(24));
-  std::vector<uint64> moves;
+  vector<uint64> moves;
   REQUIRE_FALSE(b.KingMoves(24, &moves));
   REQUIRE(moves.size() == 0);
 }
@@ -1291,7 +1288,7 @@ TEST_CASE("Pawn captures.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE(b.PawnCaptures(13));
-  std::set<SevenTuple> captures;
+  set<SevenTuple> captures;
   REQUIRE(b.PawnCaptures(13, &captures));
   REQUIRE(captures.size() == 2);
   REQUIRE(captures.count(Board("   -   -   -   - "
@@ -1323,7 +1320,7 @@ TEST_CASE("Pawn double capture with branches.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE(b.PawnCaptures(13));
-  std::set<SevenTuple> captures;
+  set<SevenTuple> captures;
   REQUIRE(b.PawnCaptures(13, &captures));
   REQUIRE(captures.size() == 3);
   REQUIRE(captures.count(Board("   -   -   -   - "
@@ -1362,7 +1359,7 @@ TEST_CASE("Pawn capture blocked by edge of board.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE_FALSE(b.PawnCaptures(12));
-  std::set<SevenTuple> captures;
+  set<SevenTuple> captures;
   REQUIRE_FALSE(b.PawnCaptures(12, &captures));
   REQUIRE(captures.size() == 0);
 }
@@ -1377,7 +1374,7 @@ TEST_CASE("Pawn capture blocked by another piece.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE_FALSE(b.PawnCaptures(13));
-  std::set<SevenTuple> captures;
+  set<SevenTuple> captures;
   REQUIRE_FALSE(b.PawnCaptures(13, &captures));
   REQUIRE(captures.size() == 0);
 }
@@ -1392,7 +1389,7 @@ TEST_CASE("King captures.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE(b.KingCaptures(13));
-  std::set<SevenTuple> captures;
+  set<SevenTuple> captures;
   REQUIRE(b.KingCaptures(13, &captures));
   REQUIRE(captures.size() == 4);
   REQUIRE(captures.count(Board("   -   -   -   - "
@@ -1441,7 +1438,7 @@ TEST_CASE("King cyclical capture.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE(b.KingCaptures(20));
-  std::set<SevenTuple> captures;
+  set<SevenTuple> captures;
   REQUIRE(b.KingCaptures(20, &captures));
   REQUIRE(captures.size() == 1);
   REQUIRE(captures.count(Board("   -   -   -   - "
@@ -1465,7 +1462,7 @@ TEST_CASE("King double capture with branches.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE(b.KingCaptures(29));
-  std::set<SevenTuple> captures;
+  set<SevenTuple> captures;
   REQUIRE(b.KingCaptures(29, &captures));
   REQUIRE(captures.size() == 3);
   REQUIRE(captures.count(Board("   -   -   -   - "
@@ -1504,7 +1501,7 @@ TEST_CASE("King capture blocked by edge of board.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE_FALSE(b.KingCaptures(12));
-  std::set<SevenTuple> captures;
+  set<SevenTuple> captures;
   REQUIRE_FALSE(b.KingCaptures(12, &captures));
   REQUIRE(captures.size() == 0);
 }
@@ -1519,7 +1516,7 @@ TEST_CASE("King capture blocked by another piece.", "[Board]") {
           "   -   -   -   - "
           " -   -   -   -   ");
   REQUIRE_FALSE(b.KingCaptures(13));
-  std::set<SevenTuple> captures;
+  set<SevenTuple> captures;
   REQUIRE_FALSE(b.KingCaptures(13, &captures));
   REQUIRE(captures.size() == 0);
 }

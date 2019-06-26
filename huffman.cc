@@ -1,11 +1,9 @@
-#include "huffman.h"
-
-#include <vector>
-
 #include "bit-string.h"
+#include "huffman.h"
+#include "std.h"
 
-std::vector<Bitstring> CanonicalHuffmanCode(const std::vector<int>& bit_count) {
-  std::vector<Bitstring> canon;
+vector<Bitstring> CanonicalHuffmanCode(const vector<int>& bit_count) {
+  vector<Bitstring> canon;
   Bitstring code("0");
   for (int i = 0; i < bit_count.size(); ++i) {
     while (code.Size() < bit_count[i]) {
@@ -18,11 +16,11 @@ std::vector<Bitstring> CanonicalHuffmanCode(const std::vector<int>& bit_count) {
   return canon;
 }
 
-std::vector<Bitstring> LengthLimitedHuffmanCode(
-  const std::vector<uint64>& freq,
+vector<Bitstring> LengthLimitedHuffmanCode(
+  const vector<uint64>& freq,
   int max_length) {
-  std::vector<Package> coins;
-  return std::vector<Bitstring>();
+  vector<Package> coins;
+  return vector<Bitstring>();
 }
 
 Package::Package() : value(0), bit_count(0) {
@@ -47,10 +45,10 @@ Package::Package(const Package& a, const Package& b)
   }
 }
 
-Package::Package(const std::vector<Package>& p) : value(0) {
+Package::Package(const vector<Package>& p) : value(0) {
   for (int i = 0; i < p.size(); ++i) {
     value += p[i].value;
-    const std::vector<int>& v = p[i].bit_count;
+    const vector<int>& v = p[i].bit_count;
     if (bit_count.size() < v.size()) {
       bit_count.resize(v.size(), 0);
     }

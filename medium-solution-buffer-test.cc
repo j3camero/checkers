@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include "medium-solution-buffer.h"
+#include "std.h"
 
 TEST_CASE("Small buffer", "[MediumSolutionBuffer]") {
   MediumSolutionBuffer b(7);
@@ -51,7 +52,7 @@ TEST_CASE("Write to disk and read back", "[MediumSolutionBuffer]") {
   a.Set(0, Win);
   a.Set(1, Loss);
   a.Set(98, Draw);
-  const std::string filename("test-solution-buffer.egd");
+  const string filename("test-solution-buffer.egd");
   bool write_success = a.Write(filename);
   REQUIRE(write_success);
   MediumSolutionBuffer b(filename);

@@ -1,9 +1,8 @@
 #ifndef _SEVEN_TUPLE_H_
 #define _SEVEN_TUPLE_H_
 
-#include <fstream>
-
 #include "six-tuple.h"
+#include "std.h"
 #include "types.h"
 
 // Stores the absolute index of a single checkers position. Has two parts:
@@ -30,7 +29,7 @@ class SevenTuple {
   bool operator<(const SevenTuple& other) const;
 
   // Outputs a string in the format db:index. ex: 3212.43:98765
-  friend std::ostream& operator<<(std::ostream &out, const SevenTuple& e);
+  friend ostream& operator<<(ostream &out, const SevenTuple& e);
 
  private:
   SixTuple db;

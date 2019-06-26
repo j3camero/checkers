@@ -1,5 +1,4 @@
 #include "large-solution-buffer.h"
-
 #include "medium-solution-buffer.h"
 
 const int max_page_bytes = 64 * 1024;

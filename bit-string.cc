@@ -1,6 +1,5 @@
 #include "bit-string.h"
-
-#include <iostream>
+#include "std.h"
 
 Bitstring::Bitstring() : size(0) {
   // Do nothing.
@@ -18,12 +17,12 @@ Bitstring::Bitstring(const Bitstring& b) : size(0) {
   Append(b);
 }
 
-Bitstring::Bitstring(const std::string& s) : size(0) {
+Bitstring::Bitstring(const string& s) : size(0) {
   Append(s);
 }
 
 Bitstring::Bitstring(const char *s) : size(0) {
-  Append(std::string(s));
+  Append(string(s));
 }
 
 bool Bitstring::Get(uint64 index) const {
@@ -89,7 +88,7 @@ void Bitstring::Append(const Bitstring& b) {
   }
 }
 
-void Bitstring::Append(const std::string& s) {
+void Bitstring::Append(const string& s) {
   // Process digits in right to left order in accordance with math convention.
   for (int i = s.size() - 1; i >= 0; --i) {
     char c = s[i];
@@ -204,7 +203,7 @@ Bitstring operator+(const Bitstring& a, const Bitstring& b) {
   return c;
 }
 
-std::ostream& operator<<(std::ostream &out, const Bitstring& b) {
+ostream& operator<<(ostream &out, const Bitstring& b) {
   for (uint64 i = b.Size(); i > 0; --i) {
     if (b.Get(i - 1)) {
       out << "1";

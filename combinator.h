@@ -1,9 +1,8 @@
 #ifndef _COMBINATOR_H_
 #define _COMBINATOR_H_
 
-#include <vector>
-
 #include "board.h"
+#include "std.h"
 #include "types.h"
 
 uint64 Factorial(unsigned int n);
@@ -28,12 +27,12 @@ class Combinator {
   // Increment by one, and move pieces accordingly on a checkerboard.
   // permutation_vector contains all the square numbers that the combinator is
   // iterating through, so the updates can be applied to board_to_update.
-  bool Increment(const std::vector<int>* permutation_vector,
+  bool Increment(const vector<int>* permutation_vector,
                  Board* board_to_update);
 
   // Increments several times. Deindex() is more effecient. Don't use this.
   bool Increment(uint64 count,
-                 const std::vector<int>* permutation_vector,
+                 const vector<int>* permutation_vector,
                  Board* board_to_update);
 
   // Returns Choose(n, k). Useful when you have the combinator object handy,
@@ -50,7 +49,7 @@ class Combinator {
   // pieces of the given piece type on a checkerboard.
   void Deindex(const uint64 new_index,
                Piece piece,
-               const std::vector<int>* permutation_vector,
+               const vector<int>* permutation_vector,
                Board* board_to_update);
 
   // Resets the Combinator to its initial position, at index zero.
@@ -62,13 +61,13 @@ class Combinator {
   bool operator!=(const Combinator& other) const;
 
   // Support stream-style printing of the combinator using the << operator.
-  friend std::ostream& operator<<(std::ostream &out, const Combinator& c);
+  friend ostream& operator<<(ostream &out, const Combinator& c);
 
  private:
   int n;
   int k;
   uint64 index;
-  std::vector<int> counters;
+  vector<int> counters;
 };
 
 #endif

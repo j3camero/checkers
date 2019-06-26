@@ -1,13 +1,11 @@
 #ifndef _ENUMERATOR_H_
 #define _ENUMERATOR_H_
 
-#include <fstream>
-#include <vector>
-
 #include "board.h"
 #include "combinator.h"
 #include "pawn-cache.h"
 #include "six-tuple.h"
+#include "std.h"
 #include "types.h"
 
 // Enumerates a set of related checkerboard positions.
@@ -53,7 +51,7 @@ class Enumerator {
   bool operator!=(const Board& b) const;
 
   // Support stream-style printing of the enumerator using the << operator.
-  friend std::ostream& operator<<(std::ostream &out, const Enumerator& e);
+  friend ostream& operator<<(ostream &out, const Enumerator& e);
 
  private:
   // Set up the black pawns on the board. Assumes that the board stars empty.
@@ -86,10 +84,10 @@ class Enumerator {
   Combinator bk;  // Cycles through the diferent arrangements of black kings.
   Combinator wk;  // Cycles through the diferent arrangements of white kings.
   // Which square numbers are currently reserved for each piece type.
-  std::vector<int> bp_squares;
-  std::vector<int> wp_squares;
-  std::vector<int> bk_squares;
-  std::vector<int> wk_squares;
+  vector<int> bp_squares;
+  vector<int> wp_squares;
+  vector<int> bk_squares;
+  vector<int> wk_squares;
   // Stores the number of arrangements of white pawns for each arrangement of
   // black pawns. Used for indexing and deindexing.
   const PawnCache& pc;

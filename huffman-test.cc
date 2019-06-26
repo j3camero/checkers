@@ -1,28 +1,26 @@
-#include "huffman.h"
-#include "catch.hpp"
-
-#include <vector>
-
 #include "bit-string.h"
+#include "catch.hpp"
+#include "huffman.h"
+#include "std.h"
 #include "types.h"
 
 TEST_CASE("Canonical Huffman codes, minimal cases", "[Huffman]") {
-  std::vector<int> bit_count;
-  const std::vector<Bitstring> zero = CanonicalHuffmanCode(bit_count);
+  vector<int> bit_count;
+  const vector<Bitstring> zero = CanonicalHuffmanCode(bit_count);
   REQUIRE(zero.size() == 0);
   bit_count.push_back(1);
-  const std::vector<Bitstring> one = CanonicalHuffmanCode(bit_count);
+  const vector<Bitstring> one = CanonicalHuffmanCode(bit_count);
   REQUIRE(one.size() == 1);
   REQUIRE(one[0] == Bitstring("0"));
 }
 
 TEST_CASE("Canonical Huffman codes, small example", "[Huffman]") {
-  std::vector<int> bit_count;
+  vector<int> bit_count;
   bit_count.push_back(1);
   bit_count.push_back(2);
   bit_count.push_back(3);
   bit_count.push_back(3);
-  const std::vector<Bitstring> code = CanonicalHuffmanCode(bit_count);
+  const vector<Bitstring> code = CanonicalHuffmanCode(bit_count);
   REQUIRE(code[0] == Bitstring("0"));
   REQUIRE(code[1] == Bitstring("10"));
   REQUIRE(code[2] == Bitstring("110"));
@@ -33,12 +31,12 @@ TEST_CASE("Canonical Huffman codes, medium example", "[Huffman]") {
   // Jump straight to big codes, with no tiny code sizes in between. This
   // would be typical of cases where the code frequencies are uniformly
   // distributed.
-  std::vector<int> bit_count;
+  vector<int> bit_count;
   bit_count.push_back(4);
   bit_count.push_back(4);
   bit_count.push_back(4);
   bit_count.push_back(5);
-  const std::vector<Bitstring> code = CanonicalHuffmanCode(bit_count);
+  const vector<Bitstring> code = CanonicalHuffmanCode(bit_count);
   REQUIRE(code[0] == Bitstring("0000"));
   REQUIRE(code[1] == Bitstring("0001"));
   REQUIRE(code[2] == Bitstring("0010"));
@@ -118,7 +116,7 @@ TEST_CASE("Merge 42 packages", "[Huffman]") {
 }
 
 TEST_CASE("Merge list of packages", "[Huffman]") {
-  std::vector<Package> v;
+  vector<Package> v;
   v.push_back(Package(7, 3));
   for (int i = 0; i < 41; ++i) {
     uint64 value = i;
