@@ -21,6 +21,7 @@ std::vector<Bitstring> CanonicalHuffmanCode(const std::vector<int>& bit_count) {
 std::vector<Bitstring> LengthLimitedHuffmanCode(
   const std::vector<uint64>& freq,
   int max_length) {
+  std::vector<Package> coins;
   return std::vector<Bitstring>();
 }
 
@@ -57,4 +58,8 @@ Package::Package(const std::vector<Package>& p) : value(0) {
       bit_count[j] += v[j];
     }
   }
+}
+
+bool Package::operator<(const Package& p) const {
+  return value < p.value;
 }

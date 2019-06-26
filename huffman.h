@@ -33,6 +33,9 @@ class Package {
   // Merge a list of packages into one. Sum their values and bit counts.
   Package(const std::vector<Package>& p);
 
+  // Comparison operator. Sorts by numismatic value.
+  bool operator<(const Package& p) const;
+
   // The total numismatic value of this package of coins.
   uint64 value;
 

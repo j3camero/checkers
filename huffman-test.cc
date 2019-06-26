@@ -137,3 +137,11 @@ TEST_CASE("Merge list of packages", "[Huffman]") {
   REQUIRE(p.bit_count[7] == 4);
   REQUIRE(p.bit_count[8] == 4);
 }
+
+TEST_CASE("Package comparison by value", "[Huffman]") {
+  Package a(111, 7);
+  Package b(222, 3);
+  REQUIRE(a < b);
+  REQUIRE(!(b < a));
+  REQUIRE(!(a < a));
+}
