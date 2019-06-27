@@ -204,7 +204,6 @@ TEST_CASE("Addition operator", "[Bitstring]") {
 }
 
 TEST_CASE("Increment", "[Bitstring]") {
-  // Sometimes the bits are in backwards order.
   Bitstring b;
   b.Increment();
   REQUIRE(b == Bitstring("1"));
@@ -218,4 +217,92 @@ TEST_CASE("Increment", "[Bitstring]") {
   REQUIRE(b == Bitstring("101"));
   b.Increment();
   REQUIRE(b == Bitstring("110"));
+}
+
+TEST_CASE("Bitstring StartsWith", "[Bitstring]") {
+  // Binary numbers are right-to-left.
+  REQUIRE(Bitstring("001").StartsWith(Bitstring("1")));
+  REQUIRE(Bitstring("001").StartsWith(Bitstring("01")));
+  REQUIRE(Bitstring("001").StartsWith(Bitstring("001")));
+  // All strings should start with the empty string.
+  REQUIRE(Bitstring("001").StartsWith(Bitstring("")));
+  // The empty string starts with the empty string.
+  REQUIRE(Bitstring("").StartsWith(Bitstring("")));
+  // The empty string does not start with any other string. Only with itself.
+  REQUIRE(!Bitstring("").StartsWith(Bitstring("1")));
+  REQUIRE(!Bitstring("").StartsWith(Bitstring("01")));
+  // Strings don't start with strings longer than themselves.
+  REQUIRE(!Bitstring("01").StartsWith(Bitstring("101")));
+  // Non-matching examples.
+  REQUIRE(!Bitstring("10110010").StartsWith(Bitstring("1")));
+  REQUIRE(!Bitstring("10110010").StartsWith(Bitstring("00")));
+  REQUIRE(!Bitstring("10110010").StartsWith(Bitstring("11")));
+  REQUIRE(!Bitstring("10110010").StartsWith(Bitstring("110")));
+  // Long-ish successful matching example.
+  Bitstring b("001111001110100111101010111110000111001111001101101000011010");
+  Bitstring prefix("1001110100111101010111110000111001111001101101000011010");
+  REQUIRE(b.StartsWith(prefix));
+  // The long string also matches itself.
+  REQUIRE(b.StartsWith(b));
+  // For that matter, the prefix also matches itself.
+  REQUIRE(prefix.StartsWith(prefix));
+  // ...but the prefix does not start with b because b is longer.
+  REQUIRE(!prefix.StartsWith(b));
+}
+
+TEST_CASE("Bitstring IsPrefixFree edge cases", "[Bitstring]") {
+  vector<Bitstring> v;
+  // An empty set of binary strings is prefix-free. I guess.
+  REQUIRE(Bitstring::IsPrefixFree(v));
+  v.push_back(Bitstring("101"));
+  // Any 1 binary string is also prefix-free, by itself.
+  REQUIRE(Bitstring::IsPrefixFree(v));
+}
+
+TEST_CASE("Bitstring IsPrefixFree 2 bit strings", "[Bitstring]") {
+  // Two equal strings are not prefix-free.
+  vector<Bitstring> same;
+  same.push_back(Bitstring("10101"));
+  same.push_back(Bitstring("10101"));
+  REQUIRE(!Bitstring::IsPrefixFree(same));
+  // Two strings are not prefix-free if one starts with the other.
+  vector<Bitstring> not_prefix_free;
+  not_prefix_free.push_back(Bitstring("10101"));
+  not_prefix_free.push_back(Bitstring("01"));
+  REQUIRE(!Bitstring::IsPrefixFree(not_prefix_free));
+  // Two strings are prefix-free if neither starts with the other.
+  vector<Bitstring> prefix_free;
+  prefix_free.push_back(Bitstring("10101"));
+  prefix_free.push_back(Bitstring("110"));
+  REQUIRE(Bitstring::IsPrefixFree(prefix_free));
+}
+
+TEST_CASE("Bitstring IsPrefixFree 3 bit strings", "[Bitstring]") {
+  vector<Bitstring> not_prefix_free;
+  not_prefix_free.push_back(Bitstring("10101"));
+  not_prefix_free.push_back(Bitstring("110"));
+  not_prefix_free.push_back(Bitstring("0110"));
+  REQUIRE(!Bitstring::IsPrefixFree(not_prefix_free));
+  vector<Bitstring> prefix_free;
+  prefix_free.push_back(Bitstring("0010100"));
+  prefix_free.push_back(Bitstring("0010110"));
+  prefix_free.push_back(Bitstring("00110"));
+  prefix_free.push_back(Bitstring("1110"));
+  REQUIRE(Bitstring::IsPrefixFree(prefix_free));
+}
+
+TEST_CASE("Bitstring IsPrefixFree big example", "[Bitstring]") {
+  vector<Bitstring> b;
+  b.push_back(Bitstring("1001101111011011100111111001010111011110111"));
+  b.push_back(Bitstring("11011001001111110010111011010000011101001111"));
+  b.push_back(Bitstring("100111101100000010110010100001011111100110"));
+  b.push_back(Bitstring("111111101111110111101000001001010011000010010"));
+  b.push_back(Bitstring("01101111011000010010101110111100110001110"));
+  b.push_back(Bitstring("1001110101110101111100011110000111011101011011"));
+  b.push_back(Bitstring("0111110111011001100011011100000101101001"));
+  b.push_back(Bitstring("11010000101011100100001100110101111010100110100"));
+  b.push_back(Bitstring("000011100011001101110110101011010100010"));
+  REQUIRE(Bitstring::IsPrefixFree(b));
+  b.push_back(Bitstring("01110101110101111100011110000111011101011011"));
+  REQUIRE(!Bitstring::IsPrefixFree(b));
 }

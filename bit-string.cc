@@ -144,6 +144,34 @@ void Bitstring::Increment() {
   }
 }
 
+bool Bitstring::StartsWith(const Bitstring& b) const {
+  if (b.Size() > Size()) {
+    return false;
+  }
+  for (uint64 i = 0; i < b.Size(); ++i) {
+    if (Get(i) != b.Get(i)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool Bitstring::IsPrefixFree(const vector<Bitstring>& v) {
+  for (int i = 0; i < v.size(); ++i) {
+    for (int j = 0; j < v.size(); ++j) {
+      if (i == j) {
+        continue;
+      }
+      const Bitstring& a = v[i];
+      const Bitstring& b = v[j];
+      if (a.StartsWith(b)) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 bool Bitstring::operator==(const Bitstring& b) const {
   if (b.size != size) {
     return false;

@@ -59,6 +59,17 @@ class Bitstring {
   // Binary addition. Adds 1 to the string, treating it like a binary number.
   void Increment();
 
+  // Returns true iff this bit string begins with b, false otherwise.
+  bool StartsWith(const Bitstring& b) const;
+
+  // Returns true iff no element of v is a prefix of any of the others. Such a
+  // collection of bit strings is called prefix-free. The significance of
+  // prefix-free is that such a collection of binary strings can be used to
+  // encode sequences of symbols without ambiguity. All other sets of binary
+  // strings are no good for encoding/compressing because they cannot be
+  // decoded without ambiguity.
+  static bool IsPrefixFree(const vector<Bitstring>& v);
+
   // Operators.
   bool operator==(const Bitstring& b) const;
   bool operator!=(const Bitstring& b) const;
