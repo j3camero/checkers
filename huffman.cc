@@ -19,8 +19,33 @@ vector<Bitstring> CanonicalHuffmanCode(const vector<int>& bit_count) {
 vector<Bitstring> LengthLimitedHuffmanCode(
   const vector<uint64>& freq,
   int max_length) {
+  const int n = freq.size();
+  if (n < 2 || max_length < 1 || freq.size() > (1 << max_length)) {
+    throw "Failed to calculate Huffman code.";
+  }
+  // Use the package-merge algorithm to calculate how many bits to use to
+  // encode each symbol.
   vector<Package> coins;
-  return vector<Bitstring>();
+  for (int i = 0; i < max_length; ++i) {
+    // Package.
+    for (int j = 0; j < n; ++j) {
+      coins.push_back(Package(freq[j], j));
+    }
+    sort(coins.begin(), coins.end());
+    // Merge.
+    vector<Package> merged_coins;
+    for (int j = 0; j + 1 < coins.size(); j += 2) {
+      const Package& a = coins[j];
+      const Package& b = coins[j + 1];
+      merged_coins.push_back(Package(a, b));
+    }
+    coins = merged_coins;
+  }
+  if (coins.size() > n - 1) {
+    coins.resize(n - 1);
+  }
+  Package package_merge(coins);
+  return CanonicalHuffmanCode(package_merge.bit_count);
 }
 
 Package::Package() : value(0), bit_count(0) {

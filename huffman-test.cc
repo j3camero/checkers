@@ -142,3 +142,100 @@ TEST_CASE("Package comparison by value", "[Huffman]") {
   REQUIRE(!(b < a));
   REQUIRE(!(a < a));
 }
+
+TEST_CASE("Sort a list of packages", "[Huffman]") {
+  // Make a list of packages in random order.
+  vector<Package> p;
+  p.push_back(Package(6, 7));
+  p.push_back(Package(4, 3));
+  p.push_back(Package(8, 9));
+  p.push_back(Package(5, 6));
+  p.push_back(Package(4, 4));
+  p.push_back(Package(5, 5));
+  p.push_back(Package(3, 1));
+  p.push_back(Package(7, 8));
+  p.push_back(Package(4, 2));
+  // Sort the packages.
+  sort(p.begin(), p.end());
+  REQUIRE(p[0].value == 3);
+  REQUIRE(p[1].value == 4);
+  REQUIRE(p[2].value == 4);
+  REQUIRE(p[3].value == 4);
+  REQUIRE(p[4].value == 5);
+  REQUIRE(p[5].value == 5);
+  REQUIRE(p[6].value == 6);
+  REQUIRE(p[7].value == 7);
+  REQUIRE(p[8].value == 8);
+  // Sort in reverse order.
+  sort(p.rbegin(), p.rend());
+  REQUIRE(p[0].value == 8);
+  REQUIRE(p[8].value == 3);
+}
+
+TEST_CASE("Limited length Huffman code (edge cases)", "[Huffman]") {
+  vector<uint64> freq;
+  // Fails because zero symbol frequencies are given.
+  REQUIRE_THROWS(LengthLimitedHuffmanCode(freq, 3));
+  freq.push_back(3);
+  // Fails because only one symbol frequency is given.
+  REQUIRE_THROWS(LengthLimitedHuffmanCode(freq, 3));
+  freq.push_back(1);
+  // Fails because the max bit length of zero is invalid.
+  REQUIRE_THROWS(LengthLimitedHuffmanCode(freq, 0));
+}
+
+TEST_CASE("Limited length Huffman code (not enough bits)", "[Huffman]") {
+  vector<uint64> freq;
+  freq.push_back(201);
+  freq.push_back(95);
+  freq.push_back(85);
+  freq.push_back(50);
+  freq.push_back(24);
+  freq.push_back(11);
+  freq.push_back(5);
+  freq.push_back(2);
+  freq.push_back(1);
+  // Fails because there are too few bits to encode all the possible symbols.
+  // 3 bits can encode 8 different symbols, but 9 symbols are given!
+  REQUIRE_THROWS(LengthLimitedHuffmanCode(freq, 3));
+  // Using 4 bits everything works fine.
+  vector<Bitstring> code = LengthLimitedHuffmanCode(freq, 4);
+  REQUIRE(code.size() == 9);
+}
+
+TEST_CASE("Limited length Huffman code (2 symbols)", "[Huffman]") {
+  vector<uint64> freq;
+  freq.push_back(3);
+  freq.push_back(1);
+  vector<Bitstring> code = LengthLimitedHuffmanCode(freq, 3);
+  REQUIRE(code.size() == 2);
+  REQUIRE(code[0] == Bitstring("0"));
+  REQUIRE(code[1] == Bitstring("1"));
+}
+
+TEST_CASE("Limited length Huffman code (3 symbols)", "[Huffman]") {
+  vector<uint64> freq;
+  freq.push_back(3);
+  freq.push_back(2);
+  freq.push_back(1);
+  vector<Bitstring> code = LengthLimitedHuffmanCode(freq, 3);
+  REQUIRE(code.size() == 3);
+  REQUIRE(code[0] == Bitstring("0"));
+  REQUIRE(code[1] == Bitstring("10"));
+  REQUIRE(code[2] == Bitstring("11"));
+}
+
+TEST_CASE("Limited length Huffman code (9 symbols)", "[Huffman]") {
+  vector<uint64> freq;
+  freq.push_back(201);
+  freq.push_back(95);
+  freq.push_back(85);
+  freq.push_back(50);
+  freq.push_back(24);
+  freq.push_back(11);
+  freq.push_back(5);
+  freq.push_back(2);
+  freq.push_back(1);
+  vector<Bitstring> code = LengthLimitedHuffmanCode(freq, 4);
+  REQUIRE(code.size() == 9);
+}
