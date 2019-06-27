@@ -7,10 +7,9 @@ vector<Bitstring> CanonicalHuffmanCode(const vector<int>& bit_count) {
   Bitstring code("0");
   for (int i = 0; i < bit_count.size(); ++i) {
     while (code.Size() < bit_count[i]) {
-      //code.Append(false);
       code = Bitstring("0") + code;
     }
-    canon.push_back(code);
+    canon.push_back(code.Reverse());
     code.Increment();
   }
   return canon;

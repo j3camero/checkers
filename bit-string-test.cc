@@ -306,3 +306,14 @@ TEST_CASE("Bitstring IsPrefixFree big example", "[Bitstring]") {
   b.push_back(Bitstring("01110101110101111100011110000111011101011011"));
   REQUIRE(!Bitstring::IsPrefixFree(b));
 }
+
+TEST_CASE("Bitstring reverse", "[Bitstring]") {
+  REQUIRE(Bitstring("").Reverse() == Bitstring(""));
+  REQUIRE(Bitstring("1").Reverse() == Bitstring("1"));
+  REQUIRE(Bitstring("0").Reverse() == Bitstring("0"));
+  REQUIRE(Bitstring("10").Reverse() == Bitstring("01"));
+  REQUIRE(Bitstring("101").Reverse() == Bitstring("101"));
+  REQUIRE(Bitstring("100").Reverse() == Bitstring("001"));
+  REQUIRE(Bitstring("100011100010").Reverse() == Bitstring("010001110001"));
+  REQUIRE(Bitstring("100011100010").Reverse() != Bitstring("01000111000"));
+}

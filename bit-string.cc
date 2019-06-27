@@ -156,6 +156,14 @@ bool Bitstring::StartsWith(const Bitstring& b) const {
   return true;
 }
 
+Bitstring Bitstring::Reverse() const {
+  Bitstring r;
+  for (uint i = 0; i < size; ++i) {
+    r.Append(Get(size - i - 1));
+  }
+  return r;
+}
+
 bool Bitstring::IsPrefixFree(const vector<Bitstring>& v) {
   for (int i = 0; i < v.size(); ++i) {
     for (int j = 0; j < v.size(); ++j) {

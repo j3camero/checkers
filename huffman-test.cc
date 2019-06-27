@@ -21,9 +21,10 @@ TEST_CASE("Canonical Huffman codes, small example", "[Huffman]") {
   bit_count.push_back(3);
   const vector<Bitstring> code = CanonicalHuffmanCode(bit_count);
   REQUIRE(code[0] == Bitstring("0"));
-  REQUIRE(code[1] == Bitstring("10"));
-  REQUIRE(code[2] == Bitstring("110"));
+  REQUIRE(code[1] == Bitstring("01"));
+  REQUIRE(code[2] == Bitstring("011"));
   REQUIRE(code[3] == Bitstring("111"));
+  REQUIRE(Bitstring::IsPrefixFree(code));
 }
 
 TEST_CASE("Canonical Huffman codes, medium example", "[Huffman]") {
@@ -37,9 +38,9 @@ TEST_CASE("Canonical Huffman codes, medium example", "[Huffman]") {
   bit_count.push_back(5);
   const vector<Bitstring> code = CanonicalHuffmanCode(bit_count);
   REQUIRE(code[0] == Bitstring("0000"));
-  REQUIRE(code[1] == Bitstring("0001"));
-  REQUIRE(code[2] == Bitstring("0010"));
-  REQUIRE(code[3] == Bitstring("00110"));
+  REQUIRE(code[1] == Bitstring("1000"));
+  REQUIRE(code[2] == Bitstring("0100"));
+  REQUIRE(code[3] == Bitstring("01100"));
 }
 
 TEST_CASE("Package with zero coins. Empty package.", "[Huffman]") {
@@ -201,6 +202,7 @@ TEST_CASE("Limited length Huffman code (not enough bits)", "[Huffman]") {
   // Using 4 bits everything works fine.
   vector<Bitstring> code = LengthLimitedHuffmanCode(freq, 4);
   REQUIRE(code.size() == 9);
+  REQUIRE(Bitstring::IsPrefixFree(code));
 }
 
 TEST_CASE("Limited length Huffman code (2 symbols)", "[Huffman]") {
@@ -211,6 +213,7 @@ TEST_CASE("Limited length Huffman code (2 symbols)", "[Huffman]") {
   REQUIRE(code.size() == 2);
   REQUIRE(code[0] == Bitstring("0"));
   REQUIRE(code[1] == Bitstring("1"));
+  REQUIRE(Bitstring::IsPrefixFree(code));
 }
 
 TEST_CASE("Limited length Huffman code (3 symbols)", "[Huffman]") {
@@ -221,8 +224,9 @@ TEST_CASE("Limited length Huffman code (3 symbols)", "[Huffman]") {
   vector<Bitstring> code = LengthLimitedHuffmanCode(freq, 3);
   REQUIRE(code.size() == 3);
   REQUIRE(code[0] == Bitstring("0"));
-  REQUIRE(code[1] == Bitstring("10"));
+  REQUIRE(code[1] == Bitstring("01"));
   REQUIRE(code[2] == Bitstring("11"));
+  REQUIRE(Bitstring::IsPrefixFree(code));
 }
 
 TEST_CASE("Limited length Huffman code (9 symbols)", "[Huffman]") {
@@ -238,4 +242,36 @@ TEST_CASE("Limited length Huffman code (9 symbols)", "[Huffman]") {
   freq.push_back(1);
   vector<Bitstring> code = LengthLimitedHuffmanCode(freq, 4);
   REQUIRE(code.size() == 9);
+  REQUIRE(Bitstring::IsPrefixFree(code));
+}
+
+TEST_CASE("Limited length Huffman code (medium example)", "[Huffman]") {
+  // A few dozen symbols with an exponential frequency distribution.
+  vector<uint64> freq;
+  uint64 n = 999999999;
+  while (n > 4) {
+    freq.push_back(n);
+    n -= 2;
+    freq.push_back(n);
+    n = n * 6 / 7;
+    freq.push_back(n);
+    n = n / 2 - 1;
+  }
+  // Squeeze the codes into shorter and shorter minimum bit lengths.
+  for (int min_length = 11; min_length >= 7; --min_length) {
+    vector<Bitstring> code = LengthLimitedHuffmanCode(freq, min_length);
+    REQUIRE(code.size() == freq.size());
+    REQUIRE(Bitstring::IsPrefixFree(code));
+  }
+}
+
+TEST_CASE("Limited length Huffman code (big example)", "[Huffman]") {
+  // Hundreds of symbols with a uniform distribution.
+  vector<uint64> freq;
+  for (uint64 i = 100; i > 0; --i) {
+    freq.push_back(i);
+  }
+  vector<Bitstring> code = LengthLimitedHuffmanCode(freq, 9);
+  REQUIRE(code.size() == freq.size());
+  REQUIRE(Bitstring::IsPrefixFree(code));
 }

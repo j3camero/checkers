@@ -62,6 +62,9 @@ class Bitstring {
   // Returns true iff this bit string begins with b, false otherwise.
   bool StartsWith(const Bitstring& b) const;
 
+  // Returns a reversed copy of the bit string.
+  Bitstring Reverse() const;
+
   // Returns true iff no element of v is a prefix of any of the others. Such a
   // collection of bit strings is called prefix-free. The significance of
   // prefix-free is that such a collection of binary strings can be used to
