@@ -13,5 +13,6 @@
 using namespace std;
 
 typedef uint64_t uint64;
+typedef unsigned int uint;
 
 #endif
