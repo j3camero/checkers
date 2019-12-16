@@ -54,7 +54,7 @@ TEST_CASE("Package with just one coin. ie: one coin", "[Huffman]") {
   REQUIRE(p.value == 1234);
   REQUIRE(p.bit_count[0] == 0);
   REQUIRE(p.bit_count[6] == 0);
-  REQUIRE(p.bit_count[7] == 0);
+  REQUIRE(p.bit_count[7] == 1);
 }
 
 TEST_CASE("Package copy constructor", "[Huffman]") {
